@@ -1,0 +1,13 @@
+.example-fill-remaining-space {
+  /* This fills the remaining space, by using flexbox. 
+     Every toolbar row uses a flexbox row layout. */
+  flex: 1 1 auto;
+}
+
+.active-route {
+    border-bottom: 3px solid white;
+}
+
+.home-class{
+    font-size: 24px;
+}
