@@ -7,9 +7,28 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
+  fileName: string = 'Select the file!'
+  isFileupload: boolean = false;
+  isNextEnabled: boolean = false;
   constructor() { }
 
   ngOnInit() {
+  }
+
+  changeAttr(event) {
+    console.log(event);
+    this.fileName = event.target.files[0].name || 'Select the file!';
+    this.isFileupload = true;
+    const files: FileList = event.target.files[0];
+
+    // setTimeout(() => {
+    //   this.isFileupload = false;
+    //   this.isNextEnabled = true;
+    // }, 10500);
+    this.uploadFile(files);
+  }
+
+  uploadFile(files) {
   }
 
 }

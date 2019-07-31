@@ -1,0 +1,25 @@
+<div class="container">
+    <div class="eda-steps" *ngIf="isFileupload">
+    </div>
+    <form class="form">
+        <div class="file-upload-wrapper" [attr.data-text]="fileName">
+            <input name="file-upload-field" type="file" class="file-upload-field" value=""
+                (change)="changeAttr($event)" />
+        </div>
+    </form>
+    <div style="margin-top: 20px;">
+        <mat-form-field>
+            <mat-label>Select an option</mat-label>
+            <mat-select [(value)]="selected">
+                <mat-option value="None">None</mat-option>
+                <mat-option value="semicolon">Semicolon (;)</mat-option>
+                <mat-option value="comma">Comma (,)</mat-option>
+                <mat-option value="tab">Tab (\t)</mat-option>
+            </mat-select>
+        </mat-form-field>
+        <button style="margin-left:20px;" mat-raised-button color="primary" (click)="submit()" [disabled]="!selected">Submit</button>
+    </div>
+    <div class="next-container">
+
+    </div>
+</div>

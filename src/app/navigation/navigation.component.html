@@ -1,14 +1,19 @@
 <mat-toolbar color="primary" class="mat-elevation-z3">
     <a mat-button [routerLink]="'/home'"><span class="home-class">ML 360</span></a>
     <span class="example-fill-remaining-space"></span>
-    <div *ngFor="let link of navLinks" routerLinkActive="active-route">
-        <a mat-button [routerLink]="link.path">
-            <span>{{link.label}}</span>
-        </a>
-    </div>
+    <ng-container *ngIf="isLoggedIn">
+        <div *ngFor="let link of navLinks" routerLinkActive="active-route">
+            <a mat-button [routerLink]="link.path">
+                <span>{{link.label}}</span>
+            </a>
+        </div>
+    </ng-container>
 
     <!-- This fills the remaining space of the current row -->
     <span class="example-fill-remaining-space"></span>
 
-    <a mat-flat-button color="primary" [routerLink]="'/login'" routerLinkActive>Login</a>
+    <a mat-flat-button color="primary" *ngIf="!isLoggedIn" [routerLink]="'/login'" routerLinkActive>Login</a>
+    <a mat-flat-button color="primary" *ngIf="isLoggedIn" (click)="logout()">
+        <mat-icon>power_settings_new</mat-icon>Logout
+    </a>
 </mat-toolbar>

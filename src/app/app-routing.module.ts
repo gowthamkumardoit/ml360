@@ -7,17 +7,19 @@ import { FeatureSelectionComponent } from './feature-selection/feature-selection
 import { ResultComponent } from './result/result.component';
 import { LoginComponent } from './login/login.component';
 
+import { AuthGuard } from './auth/auth.guard';
+
 const appRoutes: Routes = [
-  { path: '',   redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
-  { path: 'preview', component: PreviewComponent },
-  { path: 'feature-selection', component: FeatureSelectionComponent },
-  { path: 'result', component: ResultComponent },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'preview', component: PreviewComponent, canActivate: [AuthGuard] },
+  { path: 'feature-selection', component: FeatureSelectionComponent, canActivate: [AuthGuard] },
+  { path: 'result', component: ResultComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [RouterModule.forRoot(appRoutes, { onSameUrlNavigation: 'reload' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
