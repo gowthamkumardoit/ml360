@@ -23,14 +23,16 @@ import { SummaryTableComponent } from './shared/summary-table/summary-table.comp
 
 // Load FusionCharts
 import * as FusionCharts from 'fusioncharts';
-// // Load Charts module
-// import * as Charts from 'fusioncharts/fusioncharts.charts';
-// // Load fusion theme
-// import * as FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
+// Load Charts module
+import * as Charts from 'fusioncharts/fusioncharts.charts';
+// Load fusion theme
+import * as FusionTheme from 'fusioncharts/themes/fusioncharts.theme.fusion';
+import * as PowerCharts from 'fusioncharts/fusioncharts.powercharts'
+
 import { FusionChartsModule } from 'angular-fusioncharts';
 
 // Add dependencies to FusionChartsModule
-//FusionChartsModule.fcRoot(FusionCharts, Charts, FusionTheme);
+FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts,  FusionTheme);
 
 @NgModule({
   declarations: [
