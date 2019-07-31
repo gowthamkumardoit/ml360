@@ -1,1 +1,39 @@
-<p>preview works!</p>
+<div class="preview_container">
+    <div class="preview mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Preview</mat-card-title>
+            <mat-card-subtitle>First 5 rows of the dataset.</mat-card-subtitle>
+            <mat-card-content class="preview-scroll">
+                <app-table [rows]="rows"></app-table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="summary mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Summary</mat-card-title>
+            <mat-card-subtitle>Descriptive stats of the dataset. (Only applicable for numeric columns)
+            </mat-card-subtitle>
+            <mat-card-content class="summary-scroll">
+                <app-summary-table [name]="'summary'" [rows]="describeRows"></app-summary-table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="missingValues mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Missing Values</mat-card-title>
+            <mat-card-subtitle>Count and Percentage (%) of missing values in the dataset.</mat-card-subtitle>
+            <mat-card-content class="missing-values-scroll">
+                <app-summary-table [name]="'percentageOfNA'" [rows]="percentageOfNA"></app-summary-table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="skewness mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Skewness and kurtosis</mat-card-title>
+            <mat-card-subtitle>(Only applicable for numeric columns).</mat-card-subtitle>
+            <mat-card-content class="skewness-values-scroll">
+                <app-summary-table [name]="'skewnessAndKurtosis'" [rows]="skewAndKurtosis"></app-summary-table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

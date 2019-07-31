@@ -10,6 +10,8 @@ export class HomeComponent implements OnInit {
   fileName: string = 'Select the file!'
   isFileupload: boolean = false;
   isNextEnabled: boolean = false;
+
+  selected: any;
   constructor() { }
 
   ngOnInit() {

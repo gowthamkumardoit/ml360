@@ -1,1 +1,65 @@
-<p>feature-selection works!</p>
+<div class="fs_container">
+    <div class="fs mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Treatment of Missing values</mat-card-title>
+            <mat-card-subtitle>Displays how the missing values are treated dynamically.</mat-card-subtitle>
+            <mat-card-content class="fs-scroll">
+                <table>
+                    <tr>
+                        <td><span class="span-font">Columns</span>
+                        </td>
+                        <td *ngFor="let val of treatedNaItems['columns']">{{val}}</td>
+                    </tr>
+                    <tr>
+                        <td><span class="span-font">Treatment-type</span>
+                        </td>
+                        <td *ngFor="let val of treatedNaItems['treatment-type']">{{val}}</td>
+                    </tr>
+                </table>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="fs-enable mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Feature Selection </mat-card-title>
+            <mat-card-subtitle>It will enable / disable the feature selection.</mat-card-subtitle>
+
+            <mat-card-content class="fs-scroll" style="display: flex; ">
+                <mat-divider></mat-divider>
+                <p>Enable / Disable feature selection. &nbsp; &nbsp; <mat-slide-toggle></mat-slide-toggle> &nbsp;
+                    &nbsp; Select the target variable. &nbsp; &nbsp; &nbsp;
+                    <mat-form-field>
+                        <mat-label>Select an option</mat-label>
+                        <mat-select [(value)]="selected">
+                            <mat-option *ngFor="let item of variables" value="item.column">{{item.column}}</mat-option>
+                        </mat-select>
+                    </mat-form-field> &nbsp; &nbsp; &nbsp; Click proceed.&nbsp; &nbsp; &nbsp;
+                    <button mat-raised-button color="primary">Proceed</button>
+                </p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="fs-plots mat-elevation-z3">
+        <mat-card>
+            <mat-card-title>Plots </mat-card-title>
+            <mat-card-subtitle>It will display the box-plot based upon the column selection.</mat-card-subtitle>
+
+            <mat-card-content class="fs-scroll" style="display: flex; ">
+                <mat-divider></mat-divider>
+                <h3>Select column&nbsp; &nbsp; &nbsp;
+                    <mat-form-field>
+                        <mat-label>Select an option</mat-label>
+                        <mat-select [(value)]="selected">
+                            <mat-option *ngFor="let item of variables" value="item.column">{{item.column}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </h3>
+
+                <div class="chart-container">
+                    <fusioncharts width="600" height="350" type="Column2D" dataFormat="JSON" [dataSource]="dataSource">
+                    </fusioncharts>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

@@ -14,6 +14,6 @@
 
     <a mat-flat-button color="primary" *ngIf="!isLoggedIn" [routerLink]="'/login'" routerLinkActive>Login</a>
     <a mat-flat-button color="primary" *ngIf="isLoggedIn" (click)="logout()">
-        <mat-icon>power_settings_new</mat-icon>Logout
+        <mat-icon>power_settings_new</mat-icon><span style="margin-left:10px;">Logout</span>
     </a>
 </mat-toolbar>

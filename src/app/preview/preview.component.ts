@@ -6,10 +6,64 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./preview.component.scss']
 })
 export class PreviewComponent implements OnInit {
-
+  rows: any = [];
+  describeAttributes: any = [];
+  describeRows: any = {};
+  percentageOfNA: any = {};
+  skewAndKurtosis: any = {};
   constructor() { }
 
   ngOnInit() {
+    this.getRows();
+    this.getDescribeRows();
+    this.getPercentageOfNA();
+    this.getSkewandKurtosis();
   }
 
+  getRows() {
+    this.rows = [
+      ['Name', 'Age', 'Gender', 'Height', 'Weight', 'BMI'],
+      ['Gowtham', 29, 'Male', 160, 65, 24],
+      ['Bala', 34, 'Male', 175, 75, 29],
+      ['Abishek', 21, 'Male', 179, 85, 30],
+      ['Karan', 40, 'Male', 180, 65, 27],
+      ['Ashok', 33, 'Male', 184, 95, 28]
+    ];
+  }
+
+  getDescribeRows() {
+    this.describeRows = {
+      'columns': ['age', 'height', 'weight', 'bmi'],
+      'rows': [
+        { 'count': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { 'mean': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { 'std': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { 'min': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { '25%': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { '50%': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { '75%': [5.00000, 5.00000, 5.0000, 5.0000] },
+        { 'max': [5.00000, 5.00000, 5.0000, 5.0000] },
+      ],
+    };
+  }
+
+  getPercentageOfNA() {
+    this.percentageOfNA = {
+      'columns': ['name', 'age', 'gender', 'height', 'weight', 'bmi'],
+      'rows': [
+        { 'count': [0, 5, 1, 0, 0, 0] },
+        { 'percentage': [0, 100, 20, 0, 0, 0] }
+      ],
+    };
+  }
+  
+  getSkewandKurtosis() {
+    this.skewAndKurtosis = {
+      'columns': ['age', 'height', 'weight', 'bmi'],
+      'rows': [
+        { 'skewness': [5, 1, 0, 0] },
+        { 'kurtosis': [100, 20, 0, 0] }
+      ],
+    };
+  }
 }

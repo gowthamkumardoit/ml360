@@ -1,0 +1,13 @@
+.preview_container{
+    margin-top:20px;
+    .summary {
+        margin-top: 30px;
+    }
+    .missingValues, .skewness{
+        margin: 30px 0px;
+    }
+    .preview-scroll, .summary-scroll, .missing-values-scroll, .skewness-values-scroll{
+        padding-bottom: 10px;
+        overflow-x: auto;
+    }
+}
