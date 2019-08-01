@@ -11,3 +11,10 @@
         overflow-x: auto;
     }
 }
+
+.next-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin: 20px 0px;
+}

@@ -15,6 +15,8 @@ import { LoginComponent } from "./login/login.component";
 
 import { AngularFireModule } from "@angular/fire";
 import { AngularFireAuthModule } from "@angular/fire/auth";
+import { AngularFireStorageModule } from '@angular/fire/storage';
+import { AngularFirestoreModule } from '@angular//fire/firestore';
 import { environment } from "src/environments/environment";
 import { AuthGuard } from "./auth/auth.guard";
 import { TableComponent } from "./shared/table/table.component";
@@ -32,7 +34,9 @@ import { FusionChartsModule } from "angular-fusioncharts";
 import { BoxPlotComponent } from "./charts/box-plot/box-plot.component";
 import { HistogramComponent } from "./charts/histogram/histogram.component";
 import { BarComponent } from "./charts/bar/bar.component";
+import { DragDropComponent } from './shared/drag-drop/drag-drop.component';
 
+import {DragDropModule} from '@angular/cdk/drag-drop';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -49,7 +53,8 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     SummaryTableComponent,
     BoxPlotComponent,
     HistogramComponent,
-    BarComponent
+    BarComponent,
+    DragDropComponent
   ],
   imports: [
     BrowserModule,
@@ -60,7 +65,10 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     FormsModule,
     ReactiveFormsModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    AngularFireStorageModule,
+    DragDropModule,
+    AngularFirestoreModule
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent]

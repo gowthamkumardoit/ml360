@@ -1,1 +1,57 @@
-<p>result works!</p>
+<div class="result-container">
+    <div class="algorithm-container" *ngFor="let item of algorithmArray">
+        <mat-card>
+            <mat-card-header class="header">
+                <mat-card-title>{{item.title}}</mat-card-title>
+                <mat-card-subtitle>{{item.subtitle}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-list>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">RMSE</p> {{item.rmse}}
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">R-Square</p> {{item.r_square}}
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">Adjusted R-Square</p> {{item.adj_r_square}}
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+            <mat-card-footer></mat-card-footer>
+        </mat-card>
+    </div>
+
+</div>
+
+<div class="formula-container-wrapper ">
+    <div class="formula-container mat-elevation-z3">
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>Equation</mat-card-title>
+                <mat-card-subtitle>Linear Regression equation for the dataset</mat-card-subtitle>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <div style="margin-top: 20px;">
+                <mat-card-content style="padding-left: 20px;">
+                    <span class="equation-font">Y = </span> &nbsp;&nbsp;<span class="equation-font"
+                        *ngFor="let item of equation; let i = index;">
+
+                        <code class="code-style">{{item.co_ef}}</code>  {{item.col}} &nbsp;
+                        <ng-container *ngIf="i < equation.length -1 ">
+                            + &nbsp;
+                        </ng-container>
+                    </span>
+                </mat-card-content>
+            </div>
+
+            <mat-card-footer></mat-card-footer>
+        </mat-card>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+.result-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 10px;
+    width: 95vw;
+
+    .algorithm-container, .formula-container{
+        width: 25vw;
+        margin: 15px;
+
+         .strong-font{
+             margin-right: 30px;
+             font-weight: 500;
+         }
+    }
+}
+
+.formula-container-wrapper  {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin: 10px;
+    width: 95vw;
+
+    .formula-container{
+        width: 85vw;
+        margin: 15px 15px 15px 45px;
+
+        .equation-font {
+            font-size: 18px;
+
+            .code-style {
+                padding: 5px;
+                background: #c3bde4;
+                border-radius: 5px;
+            }
+        }
+    }
+}

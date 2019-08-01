@@ -8,16 +8,19 @@
         </div>
     </form>
     <div style="margin-top: 20px;">
+        <span style="margin-right: 30px;">Select the deliminator:</span>
         <mat-form-field>
             <mat-label>Select an option</mat-label>
-            <mat-select [(value)]="selected">
-                <mat-option value="None">None</mat-option>
-                <mat-option value="semicolon">Semicolon (;)</mat-option>
-                <mat-option value="comma">Comma (,)</mat-option>
-                <mat-option value="tab">Tab (\t)</mat-option>
+            <mat-select [formControl]="uploadFormControl" required>
+                <mat-option>--</mat-option>
+                <mat-option *ngFor="let item of formValues" [value]="item">
+                    {{item.name}}
+                </mat-option>
             </mat-select>
+            <mat-error *ngIf="uploadFormControl.hasError('required')">Please choose an delimiter</mat-error>
         </mat-form-field>
-        <button style="margin-left:20px;" mat-raised-button color="primary" (click)="submit()" [disabled]="!selected">Submit</button>
+        <button style="margin-left:20px;" mat-raised-button color="primary" (click)="submit()"
+            >Submit</button>
     </div>
     <div class="next-container">
 
