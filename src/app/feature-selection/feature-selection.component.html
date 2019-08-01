@@ -56,8 +56,8 @@
                 </h3>
 
                 <div class="chart-container">
-                    <fusioncharts width="600" height="350" type="boxandwhisker2d" dataFormat="JSON" [dataSource]="dataSource">
-                    </fusioncharts>
+                   <app-box-plot [dataSource]="dataSource"></app-box-plot>
+                   <app-box-plot [dataSource]="dataSource"></app-box-plot>
                 </div>
             </mat-card-content>
         </mat-card>
