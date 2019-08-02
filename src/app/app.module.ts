@@ -4,19 +4,21 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { NavigationComponent } from './navigation/navigation.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
 import { MaterialModule } from './material.module';
 import { AppRoutingModule } from './app-routing.module';
-import { HomeComponent } from './home/home.component';
-import { PreviewComponent } from './preview/preview.component';
-import { FeatureSelectionComponent } from './feature-selection/feature-selection.component';
-import { ResultComponent } from './result/result.component';
-import { LoginComponent } from './login/login.component';
+import { HomeComponent } from './components/home/home.component';
+import { PreviewComponent } from './components/preview/preview.component';
+import { FeatureSelectionComponent } from './components/feature-selection/feature-selection.component';
+import { ResultComponent } from './components/result/result.component';
+import { LoginComponent } from './components/login/login.component';
 
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular//fire/firestore';
+import { FlexLayoutModule } from "@angular/flex-layout";
+
 import { environment } from 'src/environments/environment';
 import { AuthGuard } from './auth/auth.guard';
 import { TableComponent } from './shared/table/table.component';
@@ -39,6 +41,8 @@ import { DragDropComponent } from './shared/drag-drop/drag-drop.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { BottomSheetComponent } from './shared/bottom-sheet/bottom-sheet.component';
+import { SignupComponent } from './components/signup/signup.component';
+import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -57,7 +61,9 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     HistogramComponent,
     BarComponent,
     DragDropComponent,
-    BottomSheetComponent
+    BottomSheetComponent,
+    SignupComponent,
+    ResetPasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -72,7 +78,8 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     AngularFireStorageModule,
     DragDropModule,
     AngularFirestoreModule,
-    MatBottomSheetModule
+    MatBottomSheetModule,
+    FlexLayoutModule
   ],
   entryComponents: [
     BottomSheetComponent

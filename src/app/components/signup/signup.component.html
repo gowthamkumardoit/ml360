@@ -1,0 +1,56 @@
+<div class="signup-container">
+    <div class="l_1"></div>
+    <div class="l_2">
+        <mat-card>
+            <mat-card-title-group>
+                <mat-card-title>Signup</mat-card-title>
+                <!-- <mat-card-subtitle>signup as Super Admin</mat-card-subtitle> -->
+            </mat-card-title-group>
+            <mat-card-content>
+                <form [formGroup]="signupForm" style="display:flex; flex-direction: column;" (ngSubmit)="submit()">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Name</mat-label>
+                        <input type="email" matInput name="nickname" formControlName="nickname" required
+                            autocomplete="off">
+                        <mat-error *ngIf="signupForm.controls.nickname.errors?.required">Nickname Should not be empty
+                        </mat-error>
+                        <mat-error *ngIf="signupForm.controls.nickname.errors?.minlength">Nickname Should atleast 4
+                            characters long
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Email</mat-label>
+                        <input type="email" matInput placeholder="email" formControlName="email" autocomplete="off"
+                            required />
+                        <mat-error *ngIf="signupForm.controls.email.errors?.required">Email Should not be empty
+                        </mat-error>
+                        <mat-error *ngIf="signupForm.controls.email.errors?.pattern">Invalid Email</mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Password</mat-label>
+                        <input type="password" matInput placeholder="password" formControlName="password"
+                            autocomplete="off" required />
+                        <mat-error *ngIf="signupForm.controls.password.errors?.required">Password Should not be empty
+                        </mat-error>
+                        <mat-error *ngIf="signupForm.controls.password.errors?.minlength">Password Should atleast 6
+                            characters long</mat-error>
+                    </mat-form-field>
+                    <button mat-raised-button color="primary" [disabled]="!signupForm.valid">Signup</button>
+                </form>
+                <div style="display: flex; flex-direction: row-reverse; margin: 10px 0; ">
+                    <button matTooltip="Signup with Gmail" matTooltipPosition="right" mat-raised-button color="warn"
+                        (click)="signupWithGmail()">
+                        <mat-icon>email</mat-icon>
+                    </button>
+                    <button matTooltip="Signup with Github" matTooltipPosition="left" mat-raised-button color="accent"
+                        (click)="signupWithGithub()" style="margin-right: 20px;">
+                        <img style="height:24px; width:24px;"
+                            src="https://firebasestorage.googleapis.com/v0/b/chatelectron-44eab.appspot.com/o/github.svg?alt=media&token=49d2d9c2-75ac-45ab-88d3-af3802965e8f">
+                    </button>
+                </div>
+                <a routerLink="/login">Already have an account?</a>
+            </mat-card-content>
+        </mat-card>
+    </div>
+    <div class="l_3"></div>
+</div>

@@ -11,8 +11,7 @@
 
     <!-- This fills the remaining space of the current row -->
     <span class="example-fill-remaining-space"></span>
-
-    <a mat-flat-button color="primary" *ngIf="!isLoggedIn" [routerLink]="'/login'" routerLinkActive>Login</a>
+    <a style="margin-left: 10px;" mat-raised-button color="accent" *ngIf="!isLoggedIn" [routerLink]="'/signup'" routerLinkActive>Signup</a>
     <a mat-flat-button color="primary" *ngIf="isLoggedIn" (click)="logout()">
         <mat-icon>power_settings_new</mat-icon><span style="margin-left:10px;">Logout</span>
     </a>

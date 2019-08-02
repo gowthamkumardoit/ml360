@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireStorage } from '@angular/fire/storage';
 import { AngularFirestore } from '@angular/fire/firestore';
-import { CommonService } from '../services/common.service';
+import { CommonService } from '../../services/common.service';
 import { FormControl, Validators } from '@angular/forms';
-import { Upload } from '../models/interface';
 import { Observable } from 'rxjs';
-import { Animations } from '../animations/fadein-fadeout.animation';
+import { Animations } from '../../animations/fadein-fadeout.animation';
 import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { BottomSheetComponent } from '../shared/bottom-sheet/bottom-sheet.component';
+import { BottomSheetComponent } from '../../shared/bottom-sheet/bottom-sheet.component';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -30,7 +29,7 @@ export class HomeComponent implements OnInit {
   progressValue = 20;
 
   uploadFormControl = new FormControl();
-  formValues: Upload[] = [
+  formValues = [
     { name: 'pipe', value: 'Pipe (|)' },
     { name: 'comma', value: 'Comma (,)' },
     { name: 'tab', value: 'Tab (\t)' },

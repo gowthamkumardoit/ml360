@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 
 @Component({
@@ -20,12 +20,12 @@ export class NavigationComponent implements OnInit {
 
     
     this.afauth.authState.subscribe((state) => {
-      this.isLoggedIn = this.authService.authenticated;
+      //this.isLoggedIn = this.authService.authenticated;
     })
   }
 
   logout() {
-    this.authService.logout();
-    this.isLoggedIn = this.authService.authenticated;
+    //this.authService.logout();
+  //  this.isLoggedIn = this.authService.authenticated;
   }
 }
