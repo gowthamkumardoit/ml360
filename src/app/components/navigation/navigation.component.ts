@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navigation',
@@ -9,8 +10,11 @@ import { AngularFireAuth } from '@angular/fire/auth';
 })
 export class NavigationComponent implements OnInit {
   navLinks: any = [];
-  isLoggedIn: boolean = false;
-  constructor(private authService: AuthService, private afauth: AngularFireAuth) { }
+  isLoggedIn: boolean;
+  user: any;
+  @Output() sideNavEvent = new EventEmitter();
+  sideNavClicked = false;
+  constructor(private authService: AuthService, private afauth: AngularFireAuth, private router: Router) { }
 
   ngOnInit() {
     this.navLinks = [{ path: '/home', label: 'Home' },
@@ -18,14 +22,28 @@ export class NavigationComponent implements OnInit {
     { path: '/feature-selection', label: 'Plots/Feature Selection' },
     { path: '/result', label: 'Result' }];
 
-    
-    this.afauth.authState.subscribe((state) => {
-      //this.isLoggedIn = this.authService.authenticated;
-    })
+    this.afauth.authState.subscribe((user) => {
+      if (user && user.uid) {
+        this.user = user;
+        this.isLoggedIn = true;
+        return;
+      }
+      this.isLoggedIn = false;
+    });
+
   }
 
   logout() {
-    //this.authService.logout();
-  //  this.isLoggedIn = this.authService.authenticated;
+    this.authService.signOut().subscribe((data) => {
+      if (data) {
+        this.router.navigate(['/login']);
+      }
+    });
+    this.isLoggedIn = false;
+  }
+
+  showSideNav() {
+    this.sideNavClicked = !this.sideNavClicked;
+    this.sideNavEvent.next(this.sideNavClicked);
   }
 }

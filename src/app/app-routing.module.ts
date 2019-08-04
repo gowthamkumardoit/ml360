@@ -10,16 +10,21 @@ import { SignupComponent } from './components/signup/signup.component';
 
 import { AuthGuard } from './auth/auth.guard';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { SecureInnerRoutesGuard } from './auth/secure-inner-routes.guard';
+import { SettingsComponent } from './components/settings/settings.component';
+import { HistoryComponent } from './components/history/history.component';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'signup', pathMatch: 'full' },
-  { path: 'signup', component: SignupComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'passwordReset', component: ResetPasswordComponent },
-  { path: 'home', component: HomeComponent, },
-  { path: 'preview', component: PreviewComponent, },
-  { path: 'feature-selection', component: FeatureSelectionComponent, },
-  { path: 'result', component: ResultComponent, },
+  { path: 'signup', component: SignupComponent,  },
+  { path: 'login', component: LoginComponent,   },
+  { path: 'passwordReset', component: ResetPasswordComponent,   },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'preview', component: PreviewComponent, canActivate: [AuthGuard] },
+  { path: 'feature-selection', component: FeatureSelectionComponent, canActivate: [AuthGuard] },
+  { path: 'result', component: ResultComponent, canActivate: [AuthGuard] },
+  { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },
+  { path: 'history', component: HistoryComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

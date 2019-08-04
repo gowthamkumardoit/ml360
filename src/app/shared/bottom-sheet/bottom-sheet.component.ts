@@ -10,7 +10,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
 export class BottomSheetComponent implements OnInit {
   progress: any;
   dataProgress: any;
-  isFileUploaded: boolean = false;
+  isFileUploaded = false;
   constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
     this.dataProgress = data;
     // data.progress.subscribe((item) => {
@@ -27,11 +27,13 @@ export class BottomSheetComponent implements OnInit {
   ngOnInit() {
     this.dataProgress.progress.subscribe((item) => {
       this.progress = item;
+      console.log('out---', (parseInt(this.progress, 10) === 100));
+      if (parseInt(this.progress, 10) === 100) {
+        console.log((parseInt(this.progress, 10) === 100));
+        this.isFileUploaded = true;
+        return;
+      }
     });
-
-    if (this.progress === 100) {
-      this.isFileUploaded = true;
-    }
   }
 
 

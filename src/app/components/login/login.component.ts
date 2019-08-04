@@ -42,45 +42,16 @@ export class LoginComponent implements OnInit {
   }
 
   submit() {
-    this.subscription.push(
-      this.authService.login(this.loginForm.value.email, this.loginForm.value.password).subscribe((data) => {
-        console.log(data);
-        if (data && data.user) {
-          this.router.navigate(['/home']);
-        }
-        if (data && data.code) {
-          this.alertsService.setAlertForLogin(data);
-        }
-      }
-      )
-    );
-  }
+      this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
+   }
 
 
   loginWithGmail() {
-    this.subscription.push(
-      this.authService.loginWithGmail().subscribe((data) => {
-        if (data && data.user) {
-          this.router.navigate(['/home']);
-        }
-        if (data && data.code) {
-          this.alertsService.setAlertsForAuthProviderLogins(data);
-        }
-      })
-    );
+      this.authService.loginWithGmail();
   }
 
   loginWithGithub() {
-    this.subscription.push(
-      this.authService.loginWithGithub().subscribe((data) => {
-        if (data && data.user) {
-          this.router.navigate(['/home']);
-        }
-        if (data && data.code) {
-          this.alertsService.setAlertsForAuthProviderLogins(data);
-        }
-      })
-    );
+      this.authService.loginWithGithub();
   }
 
 }

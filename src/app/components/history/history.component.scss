@@ -1,0 +1,11 @@
+.history_container {
+    padding: 20px;
+
+    .history_container_content{
+        display: flex;
+        flex-direction: row;
+        align-content: center;
+        justify-content: space-around;
+        margin-top: 30px;
+    }
+}

@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { AngularFirestore } from '@angular/fire/firestore';
 import { CommonService } from '../../services/common.service';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Animations } from '../../animations/fadein-fadeout.animation';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
-import { BottomSheetComponent } from '../../shared/bottom-sheet/bottom-sheet.component';
+import { Router } from '@angular/router';
+import { AlertsService } from 'src/app/services/alert.service';
+import { HomeService } from 'src/app/services/home.service';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -16,9 +16,9 @@ import { BottomSheetComponent } from '../../shared/bottom-sheet/bottom-sheet.com
 })
 export class HomeComponent implements OnInit {
   uploadProgress: Observable<number>;
-  fileName: string = 'Select the file!';
-  isFileupload: boolean = false;
-  isNextEnabled: boolean = false;
+  fileName = 'Select the file!';
+  isFileupload = false;
+  isNextEnabled = false;
   uid: string;
   files: FileList;
   selected: any;
@@ -27,6 +27,8 @@ export class HomeComponent implements OnInit {
   isFileUploadedtoDb = false;
   isFileSubmitted = false;
   progressValue = 20;
+  isFileDeleted = false;
+  uploadTask: any;
 
   uploadFormControl = new FormControl();
   formValues = [
@@ -36,28 +38,24 @@ export class HomeComponent implements OnInit {
     { name: 'semicolon', value: 'Semi colon (;)' },
   ];
 
-  constructor(private afauth: AngularFireAuth, private storage: AngularFireStorage, private db: AngularFirestore, private commonService: CommonService, private bottomSheet: MatBottomSheet) {
-    this.items = [
-      { step: '1', name: 'Uploading the file...' },
-      { step: '2', name: 'Finding the missing values...' },
-      { step: '3', name: 'Treating all missing values...' },
-      { step: '4', name: 'Running the Random Forest Algorthim...' },
-      { step: '5', name: 'Extracting the feature columns..' }
-    ];
+  constructor(private afauth: AngularFireAuth, private storage: AngularFireStorage, private commonService: CommonService, private router: Router,
+    private alertsService: AlertsService, private homeService: HomeService) {
+
   }
 
   ngOnInit() {
   }
 
+  // Selecting the delimiter of the uploaded file.
   selectDelimiter() {
     if (this.selected != null) {
       this.isSelected = true;
     } else {
       this.isSelected = false;
     }
-
   }
 
+  // This change event will trigger when the user select the file and click OK or Cancel button in the dialog box.
   changeAttr(event) {
     this.fileName = event.target.files[0].name || 'Select the file!';
     this.isFileupload = true;
@@ -65,58 +63,55 @@ export class HomeComponent implements OnInit {
     this.uid = this.afauth.auth.currentUser.uid;
   }
 
+  // After Selecting the file and delimiter submit function will trigger by clicking submit button.
   submit() {
+
     if (!this.files) {
-      this.commonService.showError('File should be uploaded');
+      this.alertsService.showError('File should be uploaded');
       return;
     }
 
     if (this.uploadFormControl.hasError('required')) {
-      this.commonService.showError('Please select the delimiter');
+      this.alertsService.showError('Please select the delimiter');
       return;
     }
 
-    this.uploadFile(this.files, this.uid, this.uploadFormControl.value);
+    this.uploadFile(this.files);
+    this.isFileDeleted = false;
   }
 
-  uploadFile(files, uid, delim) {
-
-    const randomId = 'file_' + Math.floor(Math.random() * 1000000);
-    const filePath = 'uploads/' + randomId;
-    const uploadTask = this.storage.upload(filePath, files);
+  // Uploading the files to the Firebase Storage
+  uploadFile(files) {
+    const filePath = 'uploads/' + this.fileName;
+    this.uploadTask = this.storage.upload(filePath, files);
     this.isFileSubmitted = true;
-    this.uploadProgress = uploadTask.percentageChanges();
-    this.bottomSheet.open(BottomSheetComponent, { disableClose: true, data: { progress:  this.uploadProgress } });
-    
+    this.uploadProgress = this.uploadTask.percentageChanges();
     this.uploadProgress.subscribe((progress) => {
-
-     
-      if (progress > 20) {
-        this.progressValue = progress;
-      }
-      
+      this.progressValue = progress;
 
       if (progress === 100) {
         this.isFileUploadedtoDb = true;
         this.isFileSubmitted = false;
+        this.deleteFile();
       }
     });
-   
-    uploadTask.then((data) => {
-      this.updateDb(uid, randomId, delim);
-    });
-
   }
 
-  updateDb(uid, randomId, delim) {
-    this.db.collection('uploadFiles').add({
-      name: randomId,
-      id: uid,
-      delimiter: delim.name
-    }).then((data) => {
-      console.log('data updated', data);
+  // checks the file name is already exists in the firestore, if yes, delete the entry and update it or just add a new entry.
+  deleteFile() {
+    this.homeService.deleteFile(this.fileName).then((res) => {
+      this.uploadTask.then((data) => {
+        this.updateDb();
+      });
     });
   }
 
-
+  // Uploading the file details to the Firebase Database for logged in user
+  updateDb() {
+    this.homeService.updateDb(this.uid, this.uploadFormControl.value, this.fileName).then((res) => {
+      if (res) {
+        this.router.navigate(['preview']);
+      }
+    });
+  }
 }

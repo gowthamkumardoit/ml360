@@ -1,0 +1,66 @@
+<div class="side-nav-icons-container">
+  <mat-list>
+    <mat-list-item
+      *ngIf="iconList.id == 1"
+      matTooltip="Home"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    
+    <mat-list-item
+      *ngIf="iconList.id == 2"
+      matTooltip="Preview"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    <mat-list-item
+      *ngIf="iconList.id == 3"
+      matTooltip="Feature Selection"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    <mat-list-item
+      *ngIf="iconList.id == 4"
+      matTooltip="Result"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    <mat-list-item
+      *ngIf="iconList.id == 5"
+      matTooltip="Settings"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    <mat-list-item
+      *ngIf="iconList.id == 6"
+      matTooltip="History"
+      matTooltipPosition="right"
+      [routerLink]="iconList.url"
+    >
+      <mat-icon matListIcon style="padding:0px !important; font-size:28px;">{{
+        iconList.name
+      }}</mat-icon>
+    </mat-list-item>
+    
+  </mat-list>
+</div>

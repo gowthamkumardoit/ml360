@@ -54,4 +54,7 @@ export class AlertsService {
     }
   }
 
+  showError(msg) {
+    this.snackBar.open(msg, 'close', { duration: 2000 });
+  }
 }

@@ -17,7 +17,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireAuthModule } from '@angular/fire/auth';
 import { AngularFireStorageModule } from '@angular/fire/storage';
 import { AngularFirestoreModule } from '@angular//fire/firestore';
-import { FlexLayoutModule } from "@angular/flex-layout";
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 import { environment } from 'src/environments/environment';
 import { AuthGuard } from './auth/auth.guard';
@@ -43,6 +43,13 @@ import { MatBottomSheetModule } from '@angular/material/bottom-sheet';
 import { BottomSheetComponent } from './shared/bottom-sheet/bottom-sheet.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { ResetPasswordComponent } from './components/reset-password/reset-password.component';
+import { SecureInnerRoutesGuard } from './auth/secure-inner-routes.guard';
+import { ConfirmationDialogComponent } from './shared/confirmation-dialog/confirmation-dialog.component';
+import { SideNavComponent } from './components/side-nav/side-nav.component';
+import { SideNavIconsComponent } from './shared/side-nav-icons/side-nav-icons.component';
+import { SettingsComponent } from './components/settings/settings.component';
+import { HistoryComponent } from './components/history/history.component';
+import { DataTableComponent } from './shared/data-table/data-table.component';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -63,7 +70,13 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     DragDropComponent,
     BottomSheetComponent,
     SignupComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    ConfirmationDialogComponent,
+    SideNavComponent,
+    SideNavIconsComponent,
+    SettingsComponent,
+    HistoryComponent,
+    DataTableComponent
   ],
   imports: [
     BrowserModule,
@@ -82,9 +95,9 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     FlexLayoutModule
   ],
   entryComponents: [
-    BottomSheetComponent
+    BottomSheetComponent, ConfirmationDialogComponent
   ],
-  providers: [AuthGuard],
+  providers: [AuthGuard, SecureInnerRoutesGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { MatSnackBar } from '@angular/material';
@@ -11,7 +11,7 @@ import { AlertsService } from '../../services/alert.service';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss']
 })
-export class SignupComponent implements OnInit, OnDestroy {
+export class SignupComponent implements OnInit {
   signupForm: FormGroup;
   subscription: Subscription[] = [];
   nickname: string;
@@ -42,54 +42,15 @@ export class SignupComponent implements OnInit, OnDestroy {
 
 
   submit() {
-    this.subscription.push(
-      this.authService.signup(this.signupForm.value.nickname, this.signupForm.value.email, this.signupForm.value.password)
-        .subscribe(
-          (data) => {
-            console.log(data);
-            if (data) {
-              if (data.code) {
-                this.snackBar.open(data.message, 'Close', { duration: 3000 });
-              }
-              if (data.user) {
-                this.router.navigate(['home']);
-                this.snackBar.open('Congrats! Account Created', 'Close', { duration: 3000 });
-              }
-            }
-          })
-    );
+    this.authService.signup(this.signupForm.value.nickname, this.signupForm.value.email, this.signupForm.value.password);
   }
 
   signupWithGmail() {
-    this.authService.signupWithGmail().subscribe((data) => {
-      if (data && data.user) {
-        this.router.navigate(['home']);
-        this.snackBar.open('Congrats! Account Created', 'Close', { duration: 3000 });
-      }
-      if (data && data.code) {
-        this.alertService.setAlertsForAuthProviderLogins(data);
-      }
-
-    });
+    this.authService.signupWithGmail();
   }
 
   signupWithGithub() {
-    this.authService.signupWithGithub().subscribe((data) => {
-      if (data && data.user) {
-        this.router.navigate(['home']);
-        this.snackBar.open('Congrats! Account Created', 'Close', { duration: 3000 });
-      }
-      if (data && data.code) {
-        this.alertService.setAlertsForAuthProviderLogins(data);
-      }
-    });
+    this.authService.signupWithGithub();
   }
-
-
-
-  ngOnDestroy() {
-    this.subscription.forEach(sub => sub.unsubscribe());
-  }
-
 
 }

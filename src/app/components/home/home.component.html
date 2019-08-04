@@ -1,6 +1,7 @@
+<mat-progress-bar mode="determinate" [value]="progressValue" *ngIf="isFileSubmitted" color="primary" style="height:10px; margin-top:2px;"></mat-progress-bar>
 <div class="container">
   <div class="eda-steps" *ngIf="isFileSubmitted">
-    <mat-spinner
+    <!-- <mat-spinner
       diameter="50"
       color="primary"
       mode="determinate"
@@ -9,7 +10,7 @@
 
     <p *ngIf="!isFileUploadedtoDb">
       {{ items[0].name }}
-    </p>
+    </p> -->
   </div>
   <form class="form">
     <div class="file-upload-wrapper" [attr.data-text]="fileName">
