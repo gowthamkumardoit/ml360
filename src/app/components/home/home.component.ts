@@ -19,7 +19,7 @@ export class HomeComponent implements OnInit {
   fileName = 'Select the file!';
   isFileupload = false;
   isNextEnabled = false;
-  uid: string;
+  user: any;
   files: FileList;
   selected: any;
   isSelected: boolean;
@@ -60,7 +60,7 @@ export class HomeComponent implements OnInit {
     this.fileName = event.target.files[0].name || 'Select the file!';
     this.isFileupload = true;
     this.files = event.target.files[0];
-    this.uid = this.afauth.auth.currentUser.uid;
+    this.user = JSON.parse(localStorage.getItem('user'));
   }
 
   // After Selecting the file and delimiter submit function will trigger by clicking submit button.
@@ -82,7 +82,7 @@ export class HomeComponent implements OnInit {
 
   // Uploading the files to the Firebase Storage
   uploadFile(files) {
-    const filePath = 'uploads/' + this.fileName;
+    const filePath = `uploads/${this.user.uid}/ ${this.fileName}`;
     this.uploadTask = this.storage.upload(filePath, files);
     this.isFileSubmitted = true;
     this.uploadProgress = this.uploadTask.percentageChanges();
@@ -99,7 +99,7 @@ export class HomeComponent implements OnInit {
 
   // checks the file name is already exists in the firestore, if yes, delete the entry and update it or just add a new entry.
   deleteFile() {
-    this.homeService.deleteFile(this.fileName).then((res) => {
+    this.homeService.deleteFile(this.fileName, this.user.uid).then((res) => {
       this.uploadTask.then((data) => {
         this.updateDb();
       });
@@ -108,7 +108,7 @@ export class HomeComponent implements OnInit {
 
   // Uploading the file details to the Firebase Database for logged in user
   updateDb() {
-    this.homeService.updateDb(this.uid, this.uploadFormControl.value, this.fileName).then((res) => {
+    this.homeService.updateDb(this.user.uid, this.uploadFormControl.value, this.fileName).then((res) => {
       if (res) {
         this.router.navigate(['preview']);
       }

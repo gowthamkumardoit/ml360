@@ -12,9 +12,10 @@ export class HomeService {
     constructor(private snackBar: MatSnackBar, private db: AngularFirestore, public dialog: MatDialog) { }
 
     // Delete already exist file in the firestore
-    deleteFile(filename) {
+    deleteFile(filename, uid) {
+        console.log(uid);
         return new Promise((resolve) => {
-            const deletFileQuery = this.db.collection('uploadFiles').ref.where('name', '==', filename);
+            const deletFileQuery = this.db.collection('uploadFiles').ref.where('id', '==', uid).where('name', '==', filename);
             deletFileQuery.get().then((querySnapshot) => {
                 if (querySnapshot.empty) {
                     resolve(false);
