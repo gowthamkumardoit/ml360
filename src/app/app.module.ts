@@ -49,6 +49,7 @@ import { SideNavComponent } from './components/side-nav/side-nav.component';
 import { SideNavIconsComponent } from './shared/side-nav-icons/side-nav-icons.component';
 import { SettingsComponent } from './components/settings/settings.component';
 import { HistoryComponent } from './components/history/history.component';
+import { HttpClientModule } from '@angular/common/http';
 import { DataTableComponent } from './shared/data-table/data-table.component';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
@@ -92,7 +93,8 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     DragDropModule,
     AngularFirestoreModule,
     MatBottomSheetModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    HttpClientModule,
   ],
   entryComponents: [
     BottomSheetComponent, ConfirmationDialogComponent

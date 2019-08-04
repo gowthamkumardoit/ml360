@@ -10,7 +10,6 @@ export class SideNavIconsComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('icon', this.iconList);
   }
 
 }

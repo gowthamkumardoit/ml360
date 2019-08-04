@@ -30,7 +30,7 @@ export class PreviewComponent implements OnInit {
     this.getSkewandKurtosis();
     this.getFilesForUsers();
 
-
+    this.previewService.getFileData();
   }
 
   getRows() {

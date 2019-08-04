@@ -9,6 +9,7 @@ import { switchMap } from 'rxjs/operators';
 import { User } from '../interfaces/user';
 import { AlertsService } from './alert.service';
 import { FirebaseAuth } from '@angular/fire';
+import { CommonService } from './common.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,8 @@ export class AuthService {
   usersRef: firebase.firestore.CollectionReference = this.db.collection('users').ref;
   userObject = new BehaviorSubject({});
 
-  constructor(private afauth: AngularFireAuth, private route: Router, private snackBar: MatSnackBar, private db: AngularFirestore, private alertService: AlertsService) {
+  constructor(private afauth: AngularFireAuth, private route: Router, private snackBar: MatSnackBar, private db: AngularFirestore, private alertService: AlertsService,
+    private commonService: CommonService) {
 
     this.currentUser = this.afauth.authState.pipe(
       switchMap(user => {
@@ -111,6 +113,7 @@ export class AuthService {
         if (data.user) {
           this.route.navigate(['/home']);
           this.snackBar.open('Successfully Logged In!', 'Close', { duration: 3000 });
+          this.commonService.getCurrentLoggedInUser();
         }
       }).catch(err => {
         if (err && err.code) {
@@ -177,14 +180,16 @@ export class AuthService {
   }
 
   updateUserDetailsOnSignup(data, name) {
+    console.log(name);
     const userRef: AngularFirestoreDocument = this.db.doc(`users/${data.user.uid}`);
     const updatedUser: User = {
       id: data.user.uid,
       name: data.user.displayName || name,
       email: data.user.email,
-      photoURL: data.user.photoURL || 'https://firebasestorage.googleapis.com/v0/b/chatelectron-44eab.appspot.com/o/profile_boy.png?alt=media&token=2f3a5ada-4baa-4639-a740-c66f20a30729',
+      photoURL: data.user.photoURL,
       isAdmin: false
     };
+    console.log(updatedUser);
     userRef.set(updatedUser);
     return data;
   }
