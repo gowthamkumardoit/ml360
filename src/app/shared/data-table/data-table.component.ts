@@ -23,7 +23,6 @@ export class DataTableComponent implements OnInit {
   ngOnInit() {
     this.getFilesList().then((res) => {
       if (res) {
-        console.log(this.data);
         this.dataSource = new MatTableDataSource(this.data);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

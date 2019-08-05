@@ -99,19 +99,25 @@ export class HomeComponent implements OnInit {
 
   // checks the file name is already exists in the firestore, if yes, delete the entry and update it or just add a new entry.
   deleteFile() {
+    let downloadURL;
     this.homeService.deleteFile(this.fileName, this.user.uid).then((res) => {
       this.uploadTask.then((data) => {
-        this.updateDb();
+        data.ref.getDownloadURL().then(
+          downloadUrl => {
+            downloadURL = downloadUrl;
+            this.updateDb(downloadURL);
+          })
+          });
       });
-    });
-  }
+    }
 
   // Uploading the file details to the Firebase Database for logged in user
-  updateDb() {
-    this.homeService.updateDb(this.user.uid, this.uploadFormControl.value, this.fileName).then((res) => {
-      if (res) {
-        this.router.navigate(['preview']);
+  updateDb(downloadURL) {
+        this.homeService.updateDb(this.user.uid, this.uploadFormControl.value, this.fileName).then((res) => {
+          if (res) {
+            this.router.navigate(['preview']);
+            this.homeService.updateDownloadURL(downloadURL, this.user.uid, res['id']);
+          }
+        });
       }
-    });
-  }
 }

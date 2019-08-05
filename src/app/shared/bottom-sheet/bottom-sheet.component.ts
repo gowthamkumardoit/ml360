@@ -13,10 +13,6 @@ export class BottomSheetComponent implements OnInit {
   isFileUploaded = false;
   constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
     this.dataProgress = data;
-    // data.progress.subscribe((item) => {
-    //   console.log('view++++', this.progress);
-    //   this.progressValue.next(item);
-    // });
   }
 
   openLink(event: MouseEvent): void {
@@ -27,9 +23,7 @@ export class BottomSheetComponent implements OnInit {
   ngOnInit() {
     this.dataProgress.progress.subscribe((item) => {
       this.progress = item;
-      console.log('out---', (parseInt(this.progress, 10) === 100));
       if (parseInt(this.progress, 10) === 100) {
-        console.log((parseInt(this.progress, 10) === 100));
         this.isFileUploaded = true;
         return;
       }

@@ -1,5 +1,5 @@
 <mat-toolbar color="primary" class="mat-elevation-z3 " id="mainToolbar">
-  <mat-icon (click)="showSideNav()" style="cursor: pointer">menu</mat-icon>
+  <mat-icon (click)="showSideNav()" style="cursor: pointer" *ngIf="isLoggedIn">menu</mat-icon>
   <a mat-button [routerLink]="'/home'"
     ><span class="home-class">ML 360</span></a
   >
@@ -31,16 +31,6 @@
     color="primary"
     [ngStyle]="{ 'background-image': 'url(' + user?.photoURL + ')' }"
   ></button>
-
-  <button
-    mat-mini-fab
-    [matMenuTriggerFor]="avatarDropMenu"
-    class="toolbar-avatar"
-    *ngIf="isLoggedIn && !user?.photoURL"
-    color="warn"
-  >
-    {{ user?.name }} KA
-  </button>
 </mat-toolbar>
 
 <mat-menu #avatarDropMenu="matMenu">
@@ -50,12 +40,12 @@
       <mat-card-subtitle>{{ user?.email }}</mat-card-subtitle>
     </mat-card-header>
   </mat-card>
-  <button mat-menu-item (click)="logout()">
+  <button mat-menu-item routerLink="/settings">
     <mat-icon>settings</mat-icon>
     <span>Settings</span>
   </button>
   <mat-divider></mat-divider>
-  <button mat-menu-item (click)="logout()">
+  <button mat-menu-item routerLink="/history">
     <mat-icon>history</mat-icon>
     <span>History</span>
   </button>

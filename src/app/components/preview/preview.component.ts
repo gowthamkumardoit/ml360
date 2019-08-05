@@ -30,8 +30,8 @@ export class PreviewComponent implements OnInit {
     this.getSkewandKurtosis();
     this.getFilesForUsers();
 
-    this.previewService.getFileData();
-  }
+  
+  } 
 
   getRows() {
     this.rows = [
@@ -83,9 +83,16 @@ export class PreviewComponent implements OnInit {
 
   getFilesForUsers() {
     this.previewService.getFilesForUsers().subscribe((data) => {
-      console.log('.....', data);
+      console.log(data);
       this.filesAvailable = data;
     });
 
+  }
+
+  fileSelectionEvent() {
+    console.log(this.fileControl);
+    if(this.fileControl && this.fileControl.value) {
+      this.previewService.getDownloadURLs(this.fileControl.value);
+    }
   }
 }

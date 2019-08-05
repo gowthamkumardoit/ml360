@@ -10,6 +10,7 @@ export class FeatureSelectionComponent implements OnInit {
   objectKeys = Object.keys;
   variables: any = [];
   dataSource = {};
+  selected: any;
   constructor() { }
 
   ngOnInit() {

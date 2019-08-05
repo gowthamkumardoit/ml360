@@ -62,6 +62,8 @@ export class AuthService {
           this.route.navigate(['/home']);
           this.snackBar.open('Congrats! Account Created Successfully!', 'Close', { duration: 3000 });
         }
+      }).then((data) => {
+        this.commonService.addDownloadURL(this.afauth.auth.currentUser.uid);
       })
       .catch(err => {
         if (err && err.code) {
@@ -180,20 +182,25 @@ export class AuthService {
   }
 
   updateUserDetailsOnSignup(data, name) {
-    console.log(name);
     const userRef: AngularFirestoreDocument = this.db.doc(`users/${data.user.uid}`);
     const updatedUser: User = {
       id: data.user.uid,
       name: data.user.displayName || name,
       email: data.user.email,
-      photoURL: data.user.photoURL,
+      photoURL: data.user.photoURL || 'https://firebasestorage.googleapis.com/v0/b/chatelectron-44eab.appspot.com/o/profile_boy.png?alt=media&token=2f3a5ada-4baa-4639-a740-c66f20a30729',
       isAdmin: false
     };
-    console.log(updatedUser);
+    this.upadateCurrentUserData(updatedUser);
     userRef.set(updatedUser);
     return data;
   }
 
+  upadateCurrentUserData(updatedUser) {
+    this.afauth.auth.currentUser.updateProfile({
+      displayName: updatedUser.name,
+      photoURL: updatedUser.photoURL
+    });
+  }
   updateUserDetailsOnLogin(data) {
 
     const userRef: AngularFirestoreDocument = this.db.doc(`users/${data.user.uid}`);

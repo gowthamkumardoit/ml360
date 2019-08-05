@@ -39,9 +39,11 @@ export class NavigationComponent implements OnInit {
     this.authService.signOut().subscribe((data) => {
       if (data) {
         this.router.navigate(['/login']);
+        this.isLoggedIn = false;
+        this.showSideNav();
       }
     });
-    this.isLoggedIn = false;
+   
   }
 
   showSideNav() {

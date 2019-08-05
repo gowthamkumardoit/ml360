@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationDialogComponent } from '../shared/confirmation-dialog/confirmation-dialog.component';
+import * as firebase from 'firebase';
 @Injectable({
     providedIn: 'root'
 })
 export class HomeService {
+
     loggedIn = new BehaviorSubject<boolean>(false);
     constructor(private snackBar: MatSnackBar, private db: AngularFirestore, public dialog: MatDialog) { }
 
     // Delete already exist file in the firestore
     deleteFile(filename, uid) {
-        console.log(uid);
         return new Promise((resolve) => {
             const deletFileQuery = this.db.collection('uploadFiles').ref.where('id', '==', uid).where('name', '==', filename);
             deletFileQuery.get().then((querySnapshot) => {
@@ -43,8 +44,10 @@ export class HomeService {
                 delimiter: delim.name,
                 date: new Date()
             }).then((data) => {
-                this.snackBar.open('File Uploaded Succesfully!', 'close', { duration: 2000 });
-                resolve(true);
+                data.onSnapshot((snapshot) => {
+                    this.snackBar.open('File Uploaded Succesfully!', 'close', { duration: 2000 });
+                    resolve(snapshot);
+                });
             }).catch((err) => {
                 this.snackBar.open(err.message, 'close', { duration: 2000 });
                 resolve(false);
@@ -60,5 +63,18 @@ export class HomeService {
                 resolve(result);
             });
         });
+    }
+
+
+    // update Download URL to the File uploaded
+    updateDownloadURL(url, id, docId) {
+        const documentId = docId;
+        const downloadURLref: AngularFirestoreDocument = this.db.doc(`downloadurls/${id}`);
+        let obj = {};
+        obj[documentId] = url;
+        downloadURLref.update({
+            url:  firebase.firestore.FieldValue.arrayUnion(obj)
+        });
+        obj = {};
     }
 }
