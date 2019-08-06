@@ -25,7 +25,7 @@
       <mat-card-subtitle>First 5 rows of the dataset.</mat-card-subtitle>
       <mat-card-content class="preview-scroll">
         <p class="preview_unavailable" *ngIf="!isPreviewAvailable">No Preview Available</p>
-        <app-table *ngIf="isPreviewAvailable" [rows]="rows"></app-table>
+        <app-table *ngIf="isPreviewAvailable" [rows]="rows" [cols]="cols"></app-table>
       </mat-card-content>
     </mat-card>
   </div>

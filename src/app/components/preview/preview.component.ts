@@ -2,15 +2,17 @@ import { Component, OnInit } from '@angular/core';
 import { PreviewService } from 'src/app/services/preview.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormControl, Validators } from '@angular/forms';
-import {FileInterface } from '../../interfaces/file';
-
+import { FileInterface } from '../../interfaces/file';
+import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
+import { BottomSheetComponent } from 'src/app/shared/bottom-sheet/bottom-sheet.component';
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
   styleUrls: ['./preview.component.scss']
 })
 export class PreviewComponent implements OnInit {
-  rows: any = [];
+  rows: any[] = [];
+  cols: any[] = [];
   describeAttributes: any = [];
   describeRows: any = {};
   percentageOfNA: any = {};
@@ -18,20 +20,18 @@ export class PreviewComponent implements OnInit {
   fileControl = new FormControl('', [Validators.required]);
   filesAvailable;
   isPreviewAvailable: boolean;
-  constructor(private previewService: PreviewService, private authService: AuthService) {
+  constructor(private previewService: PreviewService, private authService: AuthService, private _bottomSheet: MatBottomSheet) {
     this.isPreviewAvailable = false;
   }
 
   ngOnInit() {
 
-    this.getRows();
+    // this.getRows();
     this.getDescribeRows();
     this.getPercentageOfNA();
     this.getSkewandKurtosis();
     this.getFilesForUsers();
-
-  
-  } 
+  }
 
   getRows() {
     this.rows = [
@@ -90,9 +90,17 @@ export class PreviewComponent implements OnInit {
   }
 
   fileSelectionEvent() {
-    console.log(this.fileControl);
-    if(this.fileControl && this.fileControl.value) {
-      this.previewService.getDownloadURLs(this.fileControl.value);
+
+    if (this.fileControl && this.fileControl.value) {
+      this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
+        console.log('respone in component', response);
+        if (response) {
+          this.isPreviewAvailable = true;
+          this.cols = Array(response.cols);
+          this.rows = Array(response.rows);
+          console.log(this.rows);
+        }
+      });
     }
   }
 }

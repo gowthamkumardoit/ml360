@@ -1,12 +1,10 @@
-<table >
-    <tr>
-        <th *ngFor="let val of rows[0];">{{val}}</th>
-    </tr>
-    <tr *ngFor="let val of rows; let i = index;">
-        <ng-container *ngIf="i > 0">
-            <td *ngFor="let item of rows[i];">
-                {{item}}
-            </td>
-        </ng-container>
-    </tr>
+<table>
+  <tr>
+    <th *ngFor="let val of cols[0]">{{ val }}</th>
+  </tr>
+  <tr *ngFor="let val of rows[0]; let i = index">
+    <td *ngFor="let item of cols[0]">
+      {{ val[item] }}
+    </td>
+  </tr>
 </table>

@@ -8,11 +8,7 @@ import { Observable, BehaviorSubject } from 'rxjs';
   styleUrls: ['./bottom-sheet.component.scss']
 })
 export class BottomSheetComponent implements OnInit {
-  progress: any;
-  dataProgress: any;
-  isFileUploaded = false;
   constructor(private bottomSheetRef: MatBottomSheetRef<BottomSheetComponent>, @Inject(MAT_BOTTOM_SHEET_DATA) public data: any) {
-    this.dataProgress = data;
   }
 
   openLink(event: MouseEvent): void {
@@ -21,13 +17,7 @@ export class BottomSheetComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.dataProgress.progress.subscribe((item) => {
-      this.progress = item;
-      if (parseInt(this.progress, 10) === 100) {
-        this.isFileUploaded = true;
-        return;
-      }
-    });
+    
   }
 
 

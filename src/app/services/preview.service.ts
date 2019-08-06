@@ -39,31 +39,36 @@ export class PreviewService {
         );
     }
 
-   
+
 
     getDownloadURLs(data) {
         const docRef = this.db.collection('downloadurls').doc(data.id).ref;
         let downloadObj = [];
-        let individualDocs = [];
-        docRef.get().then(function (doc) {
-            if (doc.exists) {
-                downloadObj = doc.data()['url'].filter((item) => {
-                    return Object.keys(item) == data['docId']
+        const individualDocs = [];
+        return new Promise((resolve) => {
+            docRef.get().then((doc) => {
+                if (doc.exists) {
+                    downloadObj = doc.data()['url'].filter((item) => {
+                        return Object.keys(item) == data['docId']
+                    });
+                    downloadObj.filter((item) => {
+                        if (Object.keys(item) == data['docId']) {
+                            individualDocs.push(item[data['docId']])
+                        }
+                    });
+                } else {
+                    // doc.data() will be undefined in this case
+                    console.log("No such document!");
+                }
+            }).then(() => {
+                this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], ...data }).then((res) => {
+                    console.log('promise');
+                    resolve(res);
                 });
-                downloadObj.filter((item) => {
-                    if (Object.keys(item) == data['docId']) {
-                        individualDocs.push(item[data['docId']])
-                    }
-                });
-            } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-            }
-        }).then(() => {
-            // let splitData = individualDocs[0].split("token=")[0] || '';
-            this.passFileFromFirebasetoBackend({downloadURL: individualDocs[0], ...data});
-        }).catch(function (error) {
-            console.log("Error getting document:", error);
+
+            }).catch((error) => {
+                console.log("Error getting document:", error);
+            });
         });
     }
 
@@ -71,7 +76,7 @@ export class PreviewService {
         return new Promise((resolve) => {
             this.http.post(`${this.url}:${this.port}/api`, data).subscribe((res) => {
                 console.log('response');
-                resolve(true);
+                resolve(res);
             });
         });
     }
