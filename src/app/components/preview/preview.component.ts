@@ -3,8 +3,10 @@ import { PreviewService } from 'src/app/services/preview.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormControl, Validators } from '@angular/forms';
 import { FileInterface } from '../../interfaces/file';
-import {MatBottomSheet, MatBottomSheetRef} from '@angular/material/bottom-sheet';
-import { BottomSheetComponent } from 'src/app/shared/bottom-sheet/bottom-sheet.component';
+import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
+
 @Component({
   selector: 'app-preview',
   templateUrl: './preview.component.html',
@@ -13,61 +15,34 @@ import { BottomSheetComponent } from 'src/app/shared/bottom-sheet/bottom-sheet.c
 export class PreviewComponent implements OnInit {
   rows: any[] = [];
   cols: any[] = [];
+  summaryRows: any[] = [];
+  summaryCols: any[] = [];
   describeAttributes: any = [];
   describeRows: any = {};
   percentageOfNA: any = {};
   skewAndKurtosis: any = {};
   fileControl = new FormControl('', [Validators.required]);
   filesAvailable;
-  isPreviewAvailable: boolean;
-  constructor(private previewService: PreviewService, private authService: AuthService, private _bottomSheet: MatBottomSheet) {
-    this.isPreviewAvailable = false;
+  isFileSelected: boolean;
+  width = 900;
+  height = 600;
+  type = "scrollcombidy2d";
+  dataFormat = "json";
+  dataSource = null;
+  naChartColumns: any[] = [];
+  naCountRows = [];
+  naPercentRows = [];
+  skewness: any;
+  kurtosis: any;
+  skewnessAndKurtosis_cols: any;
+  constructor(private previewService: PreviewService, private authService: AuthService, public dialog: MatDialog) {
+    this.isFileSelected = false;
   }
 
   ngOnInit() {
 
-    // this.getRows();
-    this.getDescribeRows();
-    this.getPercentageOfNA();
     this.getSkewandKurtosis();
     this.getFilesForUsers();
-  }
-
-  getRows() {
-    this.rows = [
-      ['Name', 'Age', 'Gender', 'Height', 'Weight', 'BMI'],
-      ['Gowtham', 29, 'Male', 160, 65, 24],
-      ['Bala', 34, 'Male', 175, 75, 29],
-      ['Abishek', 21, 'Male', 179, 85, 30],
-      ['Karan', 40, 'Male', 180, 65, 27],
-      ['Ashok', 33, 'Male', 184, 95, 28]
-    ];
-  }
-
-  getDescribeRows() {
-    this.describeRows = {
-      columns: ['age', 'height', 'weight', 'bmi'],
-      rows: [
-        { count: [5.00000, 5.00000, 5.0000, 5.0000] },
-        { mean: [5.00000, 5.00000, 5.0000, 5.0000] },
-        { std: [5.00000, 5.00000, 5.0000, 5.0000] },
-        { min: [5.00000, 5.00000, 5.0000, 5.0000] },
-        { '25%': [5.00000, 5.00000, 5.0000, 5.0000] },
-        { '50%': [5.00000, 5.00000, 5.0000, 5.0000] },
-        { '75%': [5.00000, 5.00000, 5.0000, 5.0000] },
-        { max: [5.00000, 5.00000, 5.0000, 5.0000] },
-      ],
-    };
-  }
-
-  getPercentageOfNA() {
-    this.percentageOfNA = {
-      columns: ['name', 'age', 'gender', 'height', 'weight', 'bmi'],
-      rows: [
-        { count: [0, 5, 1, 0, 0, 0] },
-        { percentage: [0, 100, 20, 0, 0, 0] }
-      ],
-    };
   }
 
   getSkewandKurtosis() {
@@ -92,15 +67,89 @@ export class PreviewComponent implements OnInit {
   fileSelectionEvent() {
 
     if (this.fileControl && this.fileControl.value) {
+      this.callSpinner();
       this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
-        console.log('respone in component', response);
         if (response) {
-          this.isPreviewAvailable = true;
+          this.naChartColumns = [];
+          this.naCountRows = [];
+          this.naPercentRows = [];
           this.cols = Array(response.cols);
           this.rows = Array(response.rows);
-          console.log(this.rows);
+          this.summaryCols = Array(response.summary_cols);
+          this.summaryRows = Array(response.summary_rows);
+          response.cols.forEach((elem: any, i: number) => {
+            this.naChartColumns.push({ label: elem });
+          });
+          response.na_data_rows.forEach((elem: any, i: number) => {
+            this.naCountRows.push({ value: elem.count_of_missing_values });
+            this.naPercentRows.push({ value: elem.percent_of_missing_values });
+          });
+          console.log(response.skew);
+          this.skewness = response.skew;
+          this.kurtosis = response.kurtosis;
+          this.skewnessAndKurtosis_cols = Object.keys(response.skew);
+          console.log(this.skewnessAndKurtosis_cols);
+          let yMax = response.yMax;
+          this.getChart(yMax);
+          this.isFileSelected = true;
+          this.dialog.closeAll();
         }
       });
     }
   }
+
+  callSpinner() {
+    this.dialog.open(SpinnerComponent, { disableClose: true });
+  }
+
+  getChart(yMax) {
+    const data = {
+      chart: {
+        caption: "NA - values in count and percentage",
+        drawcrossline: "1",
+        yaxisname: "NA values in count",
+        syaxisname: "NA values in percentage",
+        showvalues: "0",
+        labeldisplay: "rotate",
+        plothighlighteffect: "fadeout",
+        theme: "fusion",
+        plotSpacePercent: 10,
+        numVisiblePlot: "20",
+        scrollheight: "10",
+        flatScrollBars: "1",
+        scrollShowButtons: "0",
+        scrollColor: "#cccccc",
+        showHoverEffect: "1",
+        numDivLines: "5",
+        sYAxisMaxValue: "100",
+        pYAxisMaxValue: yMax,
+      },
+      categories: [
+        {
+          category: this.naChartColumns
+        }
+      ],
+      dataset: [
+        {
+          seriesname: "Count of NA",
+          showvalues: "0",
+          plottooltext: "Count of NA in $label : <b>$dataValue</b>",
+          data: this.naCountRows
+        },
+
+        {
+          seriesname: "Percentage of NA",
+          parentyaxis: "S",
+          renderas: "line",
+          showvalues: "0",
+          plottooltext: "Percentage of NA in $label : <b>$dataValue</b>%",
+          data: this.naPercentRows
+        }
+      ]
+    };
+
+    this.dataSource = data;
+  }
 }
+
+

@@ -61,7 +61,8 @@ export class PreviewService {
                     console.log("No such document!");
                 }
             }).then(() => {
-                this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], ...data }).then((res) => {
+                const ext = data.name.substring(data.name.lastIndexOf('.') + 1, data.name.length) || data.name;;
+                this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], extension: ext, ...data }).then((res) => {
                     console.log('promise');
                     resolve(res);
                 });

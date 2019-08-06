@@ -8,6 +8,8 @@ import { Component, OnInit, Input } from '@angular/core';
 export class SummaryTableComponent implements OnInit {
   @Input('rows') rows;
   @Input('name') name;
+  @Input('cols') cols;
+  @Input('kurtosis_rows') kurtosis_rows;
   isSummary: boolean;
   isSkewness: boolean;
   objectKeys = Object.keys;
@@ -17,8 +19,8 @@ export class SummaryTableComponent implements OnInit {
 
   ngOnInit() {
 
-    this.columns = this.rows['columns'];
-    this.describeRows = this.rows['rows'];
+    // this.columns = this.rows['columns'];
+    // this.describeRows = this.rows['rows'];
     this.isSummary = this.summary;
     this.isSkewness = this.skewness;
   }

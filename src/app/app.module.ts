@@ -51,6 +51,7 @@ import { SettingsComponent } from './components/settings/settings.component';
 import { HistoryComponent } from './components/history/history.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DataTableComponent } from './shared/data-table/data-table.component';
+import { SpinnerComponent } from './shared/spinner/spinner.component';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -77,7 +78,8 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     SideNavIconsComponent,
     SettingsComponent,
     HistoryComponent,
-    DataTableComponent
+    DataTableComponent,
+    SpinnerComponent
   ],
   imports: [
     BrowserModule,
@@ -97,7 +99,7 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     HttpClientModule,
   ],
   entryComponents: [
-    BottomSheetComponent, ConfirmationDialogComponent
+    BottomSheetComponent, ConfirmationDialogComponent, SpinnerComponent
   ],
   providers: [AuthGuard, SecureInnerRoutesGuard],
   bootstrap: [AppComponent]

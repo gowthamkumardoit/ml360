@@ -1,43 +1,45 @@
 <table *ngIf="isSummary">
     <tr>
         <th></th>
-        <th *ngFor="let item of columns">{{item}}</th>
+        <th *ngFor="let item of cols[0]">{{item}}</th>
     </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[0])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[0]['count']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[1])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[1]['mean']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[2])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[2]['std']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[3])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[3]['min']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[4])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[4]['25%']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[5])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[5]['50%']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[6])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[6]['75%']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[7])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[7]['max']">{{val}}</td>
+    <tr *ngFor="let val of rows[0]; let i=index;">
+        <ng-container *ngIf="i==0">
+            <td><span class="span-font">Count</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==1">
+            <td><span class="span-font">Mean</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==2">
+            <td><span class="span-font">Std</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==3">
+            <td><span class="span-font">Min</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==4">
+            <td><span class="span-font">25%</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==5">
+            <td><span class="span-font">50%</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==6">
+            <td><span class="span-font">75%</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
+        <ng-container *ngIf="i==7">
+            <td><span class="span-font">Max</span></td>
+            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+        </ng-container>
     </tr>
 </table>
 
-<table *ngIf="!isSummary && !isSkewness">
+<!-- <table *ngIf="!isSummary && !isSkewness">
     <tr>
         <th></th>
         <th *ngFor="let item of columns">{{item}}</th>
@@ -51,18 +53,29 @@
         <td *ngFor="let val of describeRows[1]['percentage']">{{val}}</td>
     </tr>
 </table>
-
+-->
 <table *ngIf="isSkewness">
     <tr>
-        <th></th>
-        <th *ngFor="let item of columns">{{item}}</th>
+        <th>Columns</th>
+        <th>Skewness Value</th>
+        <th>Skewness Interpretation</th>
+        <th>Kurtosis Value</th>
+        <!-- <th>Kurtosis Interpretation</th> -->
     </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[0])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[0]['skewness']">{{val}}</td>
+    <tr *ngFor="let item of cols; let i=index">
+        <!-- <th></th> -->
+        <td>{{item}}</td>
+        <td>{{rows[item]}}</td>
+        <td *ngIf="rows[item]>=0">
+            <strong> {{
+            (rows[item] == 0 || rows[item] < 0.1 ) ?  'No Skewness' : (rows[item] >= 0.1 && rows[item] <= 1) ?
+                 'Moderately Right Skewed ' : 'Highly Right Skewed' }} </strong>
+        </td>
+        <td *ngIf="rows[item]< 0">
+            <strong>
+                {{(rows[item] >= -0.1  )? 'No Skewness' : (rows[item] < -0.1 && rows[item] <= -1) ? 'Moderately Left Skewed ' : 'Highly Left Skewed' }}</strong>
+        </td>
+        <td>{{kurtosis_rows[item]}}</td>
     </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[1])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[1]['kurtosis']">{{val}}</td>
-    </tr>
+
 </table>
