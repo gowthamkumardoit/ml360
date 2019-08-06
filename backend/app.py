@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import pyrebase
 import pandas as pd
+import simplejson as json
+
 app = Flask(__name__)
 CORS(app)
 
@@ -13,14 +15,12 @@ config = {
     "storageBucket": "ml360-68ab3.appspot.com",
     "messagingSenderId": "86402740248",
     "appId": "1:86402740248:web:8caa6dbf2183ec79",
-    "serviceAccount": "E:\\ML360\\ml\\backend\\ml360-68ab3-firebase-adminsdk-07c2u-1d133345cf.json"
+    "serviceAccount": "D:\\Kanini\\ml360-68ab3-firebase-adminsdk-07c2u-c215e020ee.json"
 }
 
 firebase = pyrebase.initialize_app(config)
 db = firebase.storage()
 files = db.list_files()
-for file in files:
-    print(db.child(file.name).get_url(None))
 
 @app.route('/api',  methods=['POST'])
 def hello():
@@ -29,13 +29,14 @@ def hello():
    
     if (request):
         postData = request.data
-        url = (postData['downloadURL'])
+        a = json.loads((postData))
+        print(a)
+        url = (a['downloadURL'])
         data = pd.read_excel(url)
         prev = data.head()
-        print(prev)
-        #url = db.child('uploads/'+postData['id']).get_url(postData.downloadURL)
-        #print(url)
-    return jsonify({'message': "Hello World!"})
+        
+       
+    return jsonify({'cols': list(data.columns.values) , 'rows': prev.to_dict(orient='records')})
 
 
 if __name__ == '__main__':
