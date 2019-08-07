@@ -6,10 +6,10 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
-  @Input('cols') cols;
-  @Input('rows') rows;
+  @Input() cols;
+  @Input() rows;
   constructor() {
-   }
+  }
 
   ngOnInit() {
   }

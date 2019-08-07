@@ -48,27 +48,27 @@ export class PreviewService {
         return new Promise((resolve) => {
             docRef.get().then((doc) => {
                 if (doc.exists) {
-                    downloadObj = doc.data()['url'].filter((item) => {
-                        return Object.keys(item) == data['docId']
+                    downloadObj = doc.data().url.filter((item) => {
+                        return Object.keys(item) === data.docId;
                     });
                     downloadObj.filter((item) => {
-                        if (Object.keys(item) == data['docId']) {
-                            individualDocs.push(item[data['docId']])
+                        if (Object.keys(item) === data.docId) {
+                            individualDocs.push(item[data.docId]);
                         }
                     });
                 } else {
                     // doc.data() will be undefined in this case
-                    console.log("No such document!");
+                    console.log('No such document!');
                 }
             }).then(() => {
-                const ext = data.name.substring(data.name.lastIndexOf('.') + 1, data.name.length) || data.name;;
+                const ext = data.name.substring(data.name.lastIndexOf('.') + 1, data.name.length) || data.name;
                 this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], extension: ext, ...data }).then((res) => {
                     console.log('promise');
                     resolve(res);
                 });
 
             }).catch((error) => {
-                console.log("Error getting document:", error);
+                console.log('Error getting document:', error);
             });
         });
     }

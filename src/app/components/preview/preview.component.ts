@@ -26,15 +26,15 @@ export class PreviewComponent implements OnInit {
   isFileSelected: boolean;
   width = 900;
   height = 600;
-  type = "scrollcombidy2d";
-  dataFormat = "json";
+  type = 'scrollcombidy2d';
+  dataFormat = 'json';
   dataSource = null;
   naChartColumns: any[] = [];
   naCountRows = [];
   naPercentRows = [];
   skewness: any;
   kurtosis: any;
-  skewnessAndKurtosis_cols: any;
+  skewnessAndKurtosisCols: any;
   constructor(private previewService: PreviewService, private authService: AuthService, public dialog: MatDialog) {
     this.isFileSelected = false;
   }
@@ -84,12 +84,10 @@ export class PreviewComponent implements OnInit {
             this.naCountRows.push({ value: elem.count_of_missing_values });
             this.naPercentRows.push({ value: elem.percent_of_missing_values });
           });
-          console.log(response.skew);
           this.skewness = response.skew;
           this.kurtosis = response.kurtosis;
-          this.skewnessAndKurtosis_cols = Object.keys(response.skew);
-          console.log(this.skewnessAndKurtosis_cols);
-          let yMax = response.yMax;
+          this.skewnessAndKurtosisCols = Object.keys(response.skew);
+          const yMax = response.yMax;
           this.getChart(yMax);
           this.isFileSelected = true;
           this.dialog.closeAll();
@@ -105,23 +103,23 @@ export class PreviewComponent implements OnInit {
   getChart(yMax) {
     const data = {
       chart: {
-        caption: "NA - values in count and percentage",
-        drawcrossline: "1",
-        yaxisname: "NA values in count",
-        syaxisname: "NA values in percentage",
-        showvalues: "0",
-        labeldisplay: "rotate",
-        plothighlighteffect: "fadeout",
-        theme: "fusion",
+        caption: 'NA - values in count and percentage',
+        drawcrossline: '1',
+        yaxisname: 'NA values in count',
+        syaxisname: 'NA values in percentage',
+        showvalues: '0',
+        labeldisplay: 'rotate',
+        plothighlighteffect: 'fadeout',
+        theme: 'fusion',
         plotSpacePercent: 10,
-        numVisiblePlot: "20",
-        scrollheight: "10",
-        flatScrollBars: "1",
-        scrollShowButtons: "0",
-        scrollColor: "#cccccc",
-        showHoverEffect: "1",
-        numDivLines: "5",
-        sYAxisMaxValue: "100",
+        numVisiblePlot: '20',
+        scrollheight: '10',
+        flatScrollBars: '1',
+        scrollShowButtons: '0',
+        scrollColor: '#cccccc',
+        showHoverEffect: '1',
+        numDivLines: '5',
+        sYAxisMaxValue: '100',
         pYAxisMaxValue: yMax,
       },
       categories: [
@@ -131,18 +129,18 @@ export class PreviewComponent implements OnInit {
       ],
       dataset: [
         {
-          seriesname: "Count of NA",
-          showvalues: "0",
-          plottooltext: "Count of NA in $label : <b>$dataValue</b>",
+          seriesname: 'Count of NA',
+          showvalues: '0',
+          plottooltext: 'Count of NA in $label : <b>$dataValue</b>',
           data: this.naCountRows
         },
 
         {
-          seriesname: "Percentage of NA",
-          parentyaxis: "S",
-          renderas: "line",
-          showvalues: "0",
-          plottooltext: "Percentage of NA in $label : <b>$dataValue</b>%",
+          seriesname: 'Percentage of NA',
+          parentyaxis: 'S',
+          renderas: 'line',
+          showvalues: '0',
+          plottooltext: 'Percentage of NA in $label : <b>$dataValue</b>%',
           data: this.naPercentRows
         }
       ]

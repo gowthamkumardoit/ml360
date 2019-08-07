@@ -17,7 +17,7 @@ export class BottomSheetComponent implements OnInit {
   }
 
   ngOnInit() {
-    
+
   }
 
 

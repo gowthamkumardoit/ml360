@@ -1,36 +1,41 @@
-.preview_container{
-    margin-top:20px;
-    padding: 0 20px;
-    .summary, .preview {
-        margin-top: 30px;
-    }
-    .missingValues, .skewness{
-        margin: 30px 0px;
-    }
-    .preview-scroll, .summary-scroll, .missing-values-scroll, .skewness-values-scroll{
-        padding-bottom: 10px;
-        overflow-x: auto;
-    }
+.preview_container {
+  margin-top: 20px;
+  padding: 0 20px;
+  .summary,
+  .preview {
+    margin-top: 30px;
+  }
+  .missingValues,
+  .skewness {
+    margin: 30px 0px;
+  }
+  .preview-scroll,
+  .summary-scroll,
+  .missing-values-scroll,
+  .skewness-values-scroll {
+    padding-bottom: 10px;
+    overflow-x: auto;
+  }
 }
 
-.next-button{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    margin: 20px 20px;
+.next-button {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin: 20px 20px;
 }
 
-.select-file-name{
-    margin-right: 20px;
-    font-size: 16px;
-    font-weight: 500;
+.select-file-name {
+  margin-right: 20px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
-.preview_unavailable{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-content: center;
-    font-size: 36px;
-    font-weight: 400;
+.preview_unavailable {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: center;
+  font-size: 36px;
+  font-weight: 400;
 }
