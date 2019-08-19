@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFireStorage } from '@angular/fire/storage';
-import { CommonService } from '../../services/common.service';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { Animations } from '../../animations/fadein-fadeout.animation';
@@ -38,8 +37,10 @@ export class HomeComponent implements OnInit {
     { name: 'semicolon', value: 'Semi colon (;)' },
   ];
 
-  constructor(private afauth: AngularFireAuth, private storage: AngularFireStorage, private commonService: CommonService, private router: Router,
-    private alertsService: AlertsService, private homeService: HomeService) {
+  // tslint:disable-next-line:max-line-length
+  constructor(private afauth: AngularFireAuth, private storage: AngularFireStorage, private router: Router, private alertsService: AlertsService,
+     // tslint:disable-next-line:align
+     private homeService: HomeService) {
 
   }
 
@@ -106,18 +107,18 @@ export class HomeComponent implements OnInit {
           downloadUrl => {
             downloadURL = downloadUrl;
             this.updateDb(downloadURL);
-          })
           });
       });
-    }
+    });
+  }
 
   // Uploading the file details to the Firebase Database for logged in user
   updateDb(downloadURL) {
-        this.homeService.updateDb(this.user.uid, this.uploadFormControl.value, this.fileName).then((res) => {
-          if (res) {
-            this.router.navigate(['preview']);
-            this.homeService.updateDownloadURL(downloadURL, this.user.uid, res['id']);
-          }
-        });
+    this.homeService.updateDb(this.user.uid, this.uploadFormControl.value, this.fileName).then((res: any) => {
+      if (res) {
+        this.router.navigate(['preview']);
+        this.homeService.updateDownloadURL(downloadURL, this.user.uid, res.id);
       }
+    });
+  }
 }

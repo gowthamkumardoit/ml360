@@ -109,7 +109,39 @@ export class PreviewComponent implements OnInit {
 		this.dialog.open(SpinnerComponent, { disableClose: true });
 	}
 
+<<<<<<< HEAD
 	getChart(yMax) {
+=======
+    if (this.fileControl && this.fileControl.value) {
+      this.callSpinner();
+      this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
+        if (response) {
+          this.naChartColumns = [];
+          this.naCountRows = [];
+          this.naPercentRows = [];
+          this.cols = Array(response.cols);
+          this.rows = Array(response.rows);
+          this.summaryCols = Array(response.summary_cols);
+          this.summaryRows = Array(response.summary_rows);
+          response.cols.forEach((elem: any, i: number) => {
+            this.naChartColumns.push({ label: elem });
+          });
+          response.na_data_rows.forEach((elem: any, i: number) => {
+            this.naCountRows.push({ value: elem.count_of_missing_values });
+            this.naPercentRows.push({ value: elem.percent_of_missing_values });
+          });
+          this.skewness = response.skew;
+          this.kurtosis = response.kurtosis;
+          this.skewnessAndKurtosisCols = Object.keys(response.skew);
+          const yMax = response.yMax;
+          this.getChart(yMax);
+          this.isFileSelected = true;
+          this.dialog.closeAll();
+        }
+      });
+    }
+  }
+>>>>>>> 96cacd608774aef33bd05ed79e7290cd8f433fec
 
 		const data = {
 			chart: {
