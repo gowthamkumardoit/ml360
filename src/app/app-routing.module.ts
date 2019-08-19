@@ -13,14 +13,15 @@ import { ResetPasswordComponent } from './components/reset-password/reset-passwo
 import { SecureInnerRoutesGuard } from './auth/secure-inner-routes.guard';
 import { SettingsComponent } from './components/settings/settings.component';
 import { HistoryComponent } from './components/history/history.component';
+import { PreviewResolver } from './resolvers/preview.resolve';
 
 const appRoutes: Routes = [
   { path: '', redirectTo: 'signup', pathMatch: 'full' },
-  { path: 'signup', component: SignupComponent,  },
-  { path: 'login', component: LoginComponent,   },
-  { path: 'passwordReset', component: ResetPasswordComponent,   },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
-  { path: 'preview', component: PreviewComponent, canActivate: [AuthGuard] },
+  { path: 'signup', component: SignupComponent, },
+  { path: 'login', component: LoginComponent, },
+  { path: 'passwordReset', component: ResetPasswordComponent, },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard],  },
+  { path: 'preview', component: PreviewComponent, canActivate: [AuthGuard], resolve: {response: PreviewResolver} },
   { path: 'feature-selection', component: FeatureSelectionComponent, canActivate: [AuthGuard] },
   { path: 'result', component: ResultComponent, canActivate: [AuthGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [AuthGuard] },

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { MatSnackBar } from '@angular/material';
 import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { AuthService } from './auth.service';
-import { take, map } from 'rxjs/operators';
+import { take, map, first } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { URL, PORT } from '../constant/app.constants';
 @Injectable({
@@ -21,7 +21,6 @@ export class PreviewService {
     uploadFilesRef = this.db.collection('uploadFiles').ref;
 
     getFilesForUsers() {
-
         return this.db.collection('uploadFiles').snapshotChanges().pipe(
             map((actions) => {
                 return actions.map(a => {
@@ -35,8 +34,9 @@ export class PreviewService {
                     return (element.id === this.afauth.auth.currentUser.uid);
                 });
                 return filterdFiles;
-            })
-        );
+            }),
+            first()
+        )
     }
 
 
@@ -65,6 +65,8 @@ export class PreviewService {
                 this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], extension: ext, ...data }).then((res) => {
                     console.log('promise');
                     resolve(res);
+                }).catch((error) => {
+                    console.log(error);
                 });
 
             }).catch((error) => {
@@ -74,6 +76,7 @@ export class PreviewService {
     }
 
     passFileFromFirebasetoBackend(data) {
+        localStorage.setItem('load_api_data', JSON.stringify(data));
         return new Promise((resolve) => {
             this.http.post(`${this.url}:${this.port}/api`, data).subscribe((res) => {
                 console.log('response');
@@ -81,6 +84,5 @@ export class PreviewService {
             });
         });
     }
-}
 
-// /vfWusrIPy6XsocDOYGoiCDSzd3g1/Off Campus_Report Updated_1.xlsx
+}

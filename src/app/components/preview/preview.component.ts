@@ -2,154 +2,145 @@ import { Component, OnInit } from '@angular/core';
 import { PreviewService } from 'src/app/services/preview.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { FormControl, Validators } from '@angular/forms';
-import { FileInterface } from '../../interfaces/file';
-import { MatBottomSheet, MatBottomSheetRef } from '@angular/material/bottom-sheet';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
+import { ActivatedRoute } from '@angular/router';
+import { MISSING_NA_CHART } from '../../constant/chart.constants';
+import { TOOLTIPS } from '../../constant/app.constants';
 
 @Component({
-  selector: 'app-preview',
-  templateUrl: './preview.component.html',
-  styleUrls: ['./preview.component.scss']
+	selector: 'app-preview',
+	templateUrl: './preview.component.html',
+	styleUrls: ['./preview.component.scss']
 })
 export class PreviewComponent implements OnInit {
-  rows: any[] = [];
-  cols: any[] = [];
-  summaryRows: any[] = [];
-  summaryCols: any[] = [];
-  describeAttributes: any = [];
-  describeRows: any = {};
-  percentageOfNA: any = {};
-  skewAndKurtosis: any = {};
-  fileControl = new FormControl('', [Validators.required]);
-  filesAvailable;
-  isFileSelected: boolean;
-  width = 900;
-  height = 600;
-  type = "scrollcombidy2d";
-  dataFormat = "json";
-  dataSource = null;
-  naChartColumns: any[] = [];
-  naCountRows = [];
-  naPercentRows = [];
-  skewness: any;
-  kurtosis: any;
-  skewnessAndKurtosis_cols: any;
-  constructor(private previewService: PreviewService, private authService: AuthService, public dialog: MatDialog) {
-    this.isFileSelected = false;
-  }
+	rows: any[] = [];
+	cols: any[] = [];
+	summaryRows: any[] = [];
+	summaryCols: any[] = [];
+	describeAttributes: any = [];
+	describeRows: any = {};
+	percentageOfNA: any = {};
+	skewAndKurtosis: any = {};
+	fileControl = new FormControl('', [Validators.required]);
+	filesAvailable;
+	isFileSelected: boolean;
+	width = 900;
+	height = 600;
+	type = "scrollcombidy2d";
+	dataFormat = "json";
+	dataSource = null;
+	naChartColumns: any[] = [];
+	naCountRows = [];
+	naPercentRows = [];
+	skewness: any;
+	kurtosis: any;
+	skewnessAndKurtosis_cols: any;
+	resovledData: any;
+	tooltips = {};
+	constructor(private previewService: PreviewService, private authService: AuthService,
+		public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
+		this.isFileSelected = false;
+	}
 
-  ngOnInit() {
+	ngOnInit() {
+		this.resovledData = this.activatedRoute.snapshot.data;
+		if (this.resovledData) {
+			this.filesAvailable = this.resovledData.response;
+		}
+		this.tooltips = TOOLTIPS;
+		this.initializePage();
+		console.log(this.filesAvailable);
+	}
 
-    this.getSkewandKurtosis();
-    this.getFilesForUsers();
-  }
+	initializePage() {
+		const previousData = JSON.parse(localStorage.getItem('selectedData'));
+		if (previousData) {
+			// this.callSpinner();
+			this.getPreprocessedData(previousData);
+		}
+	}
 
-  getSkewandKurtosis() {
-    this.skewAndKurtosis = {
-      columns: ['age', 'height', 'weight', 'bmi'],
-      rows: [
-        { skewness: [5, 1, 0, 0] },
-        { kurtosis: [100, 20, 0, 0] }
-      ],
-    };
-  }
+	fileSelectionEvent() {
 
+		if (this.fileControl && this.fileControl.value) {
+			this.callSpinner();
+			localStorage.setItem('selectedFile', JSON.stringify(this.fileControl.value));
+			this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
+				if (response) {
+					localStorage.setItem('selectedData', JSON.stringify(response));
+					this.getPreprocessedData(response);
+				}
+			}).catch((err) => {
+				console.log(err);
+				this.dialog.closeAll();
+			});
+		}
+	}
 
-  getFilesForUsers() {
-    this.previewService.getFilesForUsers().subscribe((data) => {
-      console.log(data);
-      this.filesAvailable = data;
-    });
+	getPreprocessedData(response) {
+		if (response) {
+			this.naChartColumns = [];
+			this.naCountRows = [];
+			this.naPercentRows = [];
+			this.cols = response.cols;
+			this.rows = response.rows;
+			this.summaryCols = response.summary_cols;
+			this.summaryRows = response.summary_rows;
 
-  }
+			response.cols.forEach((elem: any, i: number) => {
+				this.naChartColumns.push({ label: elem });
+			});
 
-  fileSelectionEvent() {
+			response.na_data_rows.forEach((elem: any, i: number) => {
+				this.naCountRows.push({ value: elem.count_of_missing_values });
+				this.naPercentRows.push({ value: elem.percent_of_missing_values });
+			});
+			this.skewness = response.skew;
+			this.kurtosis = response.kurtosis;
+			this.skewnessAndKurtosis_cols = Object.keys(response.skew);
+			let yMax = response.yMax;
+			this.getChart(yMax);
+			this.isFileSelected = true;
+			this.dialog.closeAll();
+		}
+	}
+	callSpinner() {
+		this.dialog.open(SpinnerComponent, { disableClose: true });
+	}
 
-    if (this.fileControl && this.fileControl.value) {
-      this.callSpinner();
-      this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
-        if (response) {
-          this.naChartColumns = [];
-          this.naCountRows = [];
-          this.naPercentRows = [];
-          this.cols = Array(response.cols);
-          this.rows = Array(response.rows);
-          this.summaryCols = Array(response.summary_cols);
-          this.summaryRows = Array(response.summary_rows);
-          response.cols.forEach((elem: any, i: number) => {
-            this.naChartColumns.push({ label: elem });
-          });
-          response.na_data_rows.forEach((elem: any, i: number) => {
-            this.naCountRows.push({ value: elem.count_of_missing_values });
-            this.naPercentRows.push({ value: elem.percent_of_missing_values });
-          });
-          console.log(response.skew);
-          this.skewness = response.skew;
-          this.kurtosis = response.kurtosis;
-          this.skewnessAndKurtosis_cols = Object.keys(response.skew);
-          console.log(this.skewnessAndKurtosis_cols);
-          let yMax = response.yMax;
-          this.getChart(yMax);
-          this.isFileSelected = true;
-          this.dialog.closeAll();
-        }
-      });
-    }
-  }
+	getChart(yMax) {
 
-  callSpinner() {
-    this.dialog.open(SpinnerComponent, { disableClose: true });
-  }
+		const data = {
+			chart: {
+				...MISSING_NA_CHART,
+				pYAxisMaxValue: yMax,
+			},
+			categories: [
+				{
+					category: this.naChartColumns
+				}
+			],
+			dataset: [
+				{
+					seriesname: "Count of NA",
+					showvalues: "0",
+					plottooltext: "Count of NA in $label : <b>$dataValue</b>",
+					data: this.naCountRows
+				},
 
-  getChart(yMax) {
-    const data = {
-      chart: {
-        caption: "NA - values in count and percentage",
-        drawcrossline: "1",
-        yaxisname: "NA values in count",
-        syaxisname: "NA values in percentage",
-        showvalues: "0",
-        labeldisplay: "rotate",
-        plothighlighteffect: "fadeout",
-        theme: "fusion",
-        plotSpacePercent: 10,
-        numVisiblePlot: "20",
-        scrollheight: "10",
-        flatScrollBars: "1",
-        scrollShowButtons: "0",
-        scrollColor: "#cccccc",
-        showHoverEffect: "1",
-        numDivLines: "5",
-        sYAxisMaxValue: "100",
-        pYAxisMaxValue: yMax,
-      },
-      categories: [
-        {
-          category: this.naChartColumns
-        }
-      ],
-      dataset: [
-        {
-          seriesname: "Count of NA",
-          showvalues: "0",
-          plottooltext: "Count of NA in $label : <b>$dataValue</b>",
-          data: this.naCountRows
-        },
-
-        {
-          seriesname: "Percentage of NA",
-          parentyaxis: "S",
-          renderas: "line",
-          showvalues: "0",
-          plottooltext: "Percentage of NA in $label : <b>$dataValue</b>%",
-          data: this.naPercentRows
-        }
-      ]
-    };
-
-    this.dataSource = data;
-  }
+				{
+					seriesname: "Percentage of NA",
+					parentyaxis: "S",
+					renderas: "line",
+					showvalues: "0",
+					plottooltext: "Percentage of NA in $label : <b>$dataValue</b>%",
+					data: this.naPercentRows
+				}
+			]
+		};
+		this.dataSource = data;
+	}
 }
 
 

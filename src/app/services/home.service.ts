@@ -42,7 +42,8 @@ export class HomeService {
                 name: fileName,
                 id: uid,
                 delimiter: delim.name,
-                date: new Date()
+                date: new Date(),
+                linkID: `file_${Math.floor(Math.random() * 1000)}`
             }).then((data) => {
                 data.onSnapshot((snapshot) => {
                     this.snackBar.open('File Uploaded Succesfully!', 'close', { duration: 2000 });

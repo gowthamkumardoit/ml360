@@ -19,8 +19,8 @@ export class NavigationComponent implements OnInit {
 
   ngOnInit() {
     this.navLinks = [{ path: '/home', label: 'Home' },
-    { path: '/preview', label: 'Statstical Analysis' },
-    { path: '/feature-selection', label: 'Plots/Feature Selection' },
+    { path: '/preview', label: 'Descriptive Statistics' },
+    { path: '/feature-selection', label: 'Feature Engineering' },
     { path: '/result', label: 'Result' }];
 
    

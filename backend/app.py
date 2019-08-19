@@ -4,6 +4,7 @@ import pyrebase
 import pandas as pd
 import simplejson as json
 import numpy as np
+import Eda_imputation_new as eda
 
 app = Flask(__name__)
 CORS(app)
@@ -33,14 +34,27 @@ def hello():
         postData = request.data
         res = json.loads((postData))
         url = (res['downloadURL'])
+
+        if res['delimiter'] == 'comma':
+            sep = ','
+        elif res['delimiter'] == 'semicolon':
+            sep = ';'
+        elif res['delimiter'] == 'tab':
+            sep = '\t'
+        elif res['delimiter'] == 'pipe':
+            sep = '|'
+
         if (res['extension'] == 'csv'):
-            data = pd.read_csv(url, sep=";")
-            prev = data.head()
+            data = pd.read_csv(url, sep=sep)
+            prev = data.fillna("NA")
+            prev = prev.head()
         else:
             data = pd.read_excel(url)
-            prev = data.head()
+            prev = data.fillna("NA")
+            prev = prev.head()
 
         if (data.describe().to_dict(orient='records')):
+
             describe_rows = data.describe().to_dict(orient='records')
             describe_columns = list(data.describe().columns)
         else:
@@ -48,6 +62,7 @@ def hello():
             describe_columns = ''
 
         df = data
+        df = df.replace(' ', np.nan)
         df = df.replace('?', np.nan)
         df = df.replace('*', np.nan)
         df = df.replace('N.A.', np.nan)
@@ -57,8 +72,7 @@ def hello():
         missing_value_df = pd.DataFrame(
             {'percent_of_missing_values': percent_missing, 'count_of_missing_values': count_of_null})
 
-        print(df.skew(skipna=True).dropna())
-        print(df.kurtosis(skipna=True).dropna())
+        print('executed')
         return jsonify({
             'cols': list(data.columns.values),
             'rows': prev.to_dict(orient='records'),
@@ -70,6 +84,77 @@ def hello():
             'kurtosis': df.kurtosis(skipna=True).dropna().to_dict()
         })
 
+
+@app.route('/api/chart',  methods=['POST'])
+def getChart():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        url = (res['downloadURL'])
+
+        if res['delimiter'] == 'comma':
+            sep = ','
+        elif res['delimiter'] == 'semicolon':
+            sep = ';'
+        elif res['delimiter'] == 'tab':
+            sep = '\t'
+        elif res['delimiter'] == 'pipe':
+            sep = '|'
+
+        if (res['extension'] == 'csv'):
+            data = pd.read_csv(url, sep=sep)
+            print(data)
+        else:
+            data = pd.read_excel(url)
+
+        items = data[res['chart_column']].astype(float)
+        items = items.fillna(0)
+        outliers = detect_outliers(items)
+
+        print(outliers)
+        return jsonify({
+            'columns': list((items.values)),
+            'outliers': list(outliers)
+        })
+
+def detect_outliers(x):
+   outliers = []
+   q1 , q3 = np.percentile(x,[25,75])
+   iqr = q3 - q1
+   lower_bound = q1 - (1.5 * iqr)
+   upper_bound = q3 + (1.5 * iqr)
+   for i in x:
+       if i < lower_bound or i > upper_bound:
+           outliers.append(i)
+   return outliers 
+
+@app.route('/api/imputedValues',  methods=['POST'])
+def getImputedResult():
+     if (request):
+        postData = request.data
+        res = json.loads((postData))
+        url = (res['downloadURL'])
+
+        if res['delimiter'] == 'comma':
+            sep = ','
+        elif res['delimiter'] == 'semicolon':
+            sep = ';'
+        elif res['delimiter'] == 'tab':
+            sep = '\t'
+        elif res['delimiter'] == 'pipe':
+            sep = '|'
+
+        if (res['extension'] == 'csv'):
+            data = pd.read_csv(url, sep=sep)
+            print(data)
+        else:
+            data = pd.read_excel(url)
+
+        result = eda.imputation(data, res['targetColumn'])
+        print(result)
+        return jsonify({
+            'result': result
+        })
 
 if __name__ == '__main__':
     app.run()

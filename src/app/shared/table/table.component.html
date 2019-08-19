@@ -1,9 +1,9 @@
 <table>
   <tr>
-    <th *ngFor="let val of cols[0]">{{ val }}</th>
+    <th *ngFor="let val of cols">{{ val }}</th>
   </tr>
-  <tr *ngFor="let val of rows[0]; let i = index">
-    <td *ngFor="let item of cols[0]">
+  <tr *ngFor="let val of rows; let i = index">
+    <td *ngFor="let item of cols">
       {{ val[item] }}
     </td>
   </tr>

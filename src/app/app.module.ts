@@ -52,6 +52,14 @@ import { HistoryComponent } from './components/history/history.component';
 import { HttpClientModule } from '@angular/common/http';
 import { DataTableComponent } from './shared/data-table/data-table.component';
 import { SpinnerComponent } from './shared/spinner/spinner.component';
+import { PreviewResolver } from './resolvers/preview.resolve';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { LayoutModule } from '@angular/cdk/layout';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -79,7 +87,8 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     SettingsComponent,
     HistoryComponent,
     DataTableComponent,
-    SpinnerComponent
+    SpinnerComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -97,11 +106,17 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     MatBottomSheetModule,
     FlexLayoutModule,
     HttpClientModule,
+    MatGridListModule,
+    MatCardModule,
+    MatMenuModule,
+    MatIconModule,
+    MatButtonModule,
+    LayoutModule,
   ],
   entryComponents: [
     BottomSheetComponent, ConfirmationDialogComponent, SpinnerComponent
   ],
-  providers: [AuthGuard, SecureInnerRoutesGuard],
+  providers: [AuthGuard, SecureInnerRoutesGuard, PreviewResolver],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

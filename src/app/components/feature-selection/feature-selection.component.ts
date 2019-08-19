@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { FeatureSelectionService } from 'src/app/services/feature-selection.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-feature-selection',
@@ -10,28 +12,83 @@ export class FeatureSelectionComponent implements OnInit {
   objectKeys = Object.keys;
   variables: any = [];
   dataSource = {};
-  selected: any;
-  constructor() { }
+  selectedTargetVariable: any;
+  selectedColumnforChart: any;
+  boxplotValues: any;
+  outlierValues: any;
+  dataSourceForHistogram = {};
+  histogramValues = [];
+  naValuesTreatedColumns: any = [];
+  naValuesTreatedValues: any = [];
+  constructor(private featureSelectionService: FeatureSelectionService) { }
 
   ngOnInit() {
-    this.getTreatedMissingValues();
-    this.variables = [
-      { column: 'Name' },
-      { column: 'Age' },
-      { column: 'Gender' },
-      { column: 'Height' },
-      { column: 'Weight' },
-      { column: 'BMI' }
-    ];
+    const columns = JSON.parse(localStorage.getItem('selectedData'));
+    let newColumns = [];
+    if (columns) {
+      columns['cols'].forEach((elem) => {
+        newColumns.push({ 'column': elem });
+      });
+      this.variables = newColumns;
+    }
+  }
+
+  getMissingValues() {
+    localStorage.setItem('targetColumn', this.selectedTargetVariable);
+    let selectedFile = JSON.parse(localStorage.getItem('load_api_data'));
+    const postData = { ...selectedFile, 'targetColumn': this.selectedTargetVariable };
+    this.featureSelectionService.getMissingValues(postData).then((response: any) => {
+      if(response) {
+        let tempRes = response.result;
+        this.naValuesTreatedColumns = [];
+        this.naValuesTreatedValues = [];
+        let key;
+        tempRes.forEach((elem, i) => {
+          key = Object.keys(elem);
+          this.naValuesTreatedColumns.push(Object.keys(elem));
+          this.naValuesTreatedValues.push(elem[key]);
+        });
+        this.getTreatedMissingValues();
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+
+  getTreatedMissingValues() {
+    this.treatedNaItems = {
+      'columns': this.naValuesTreatedColumns,
+      'treatment-type': this.naValuesTreatedValues
+    }
+  }
+
+  loadChart() {
+    localStorage.setItem('selectedColumn', this.selectedColumnforChart);
+    let selectedFile = JSON.parse(localStorage.getItem('load_api_data'));
+    const postData = { ...selectedFile, 'chart_column': this.selectedColumnforChart };
+
+    this.featureSelectionService.loadChart(postData).then((res) => {
+      let tempBoxValues = res['columns'];
+      this.outlierValues = res['outliers'];
+      this.boxplotValues = _.difference(tempBoxValues, this.outlierValues);
+      this.histogramValues = [];
+      tempBoxValues.forEach((ele) => {
+        this.histogramValues.push({ value: ele });
+      });
+      this.prepareChart();
+      this.prepareHistogram();
+    }).catch((err) => {
+      console.log(err);
+    })
+  }
+
+  prepareChart() {
     this.dataSource =
       {
         "chart": {
           "theme": "fusion",
-          "caption": "Distribution of annual salaries",
-          "subcaption": "By Gender",
-          "xAxisName": "Pay Grades",
-          "YAxisName": "Salaries (In USD)",
-          "numberPrefix": "$",
+          "caption": "Distribution of " + this.selectedColumnforChart,
           "legendBorderAlpha": "0",
           "legendShadow": "0",
           "legendPosition": "right",
@@ -41,74 +98,60 @@ export class FeatureSelectionComponent implements OnInit {
           "toolTipBgColor": "#000000",
           "toolTipBgAlpha": "80",
           "toolTipBorderRadius": "2",
-          "toolTipPadding": "5"
+          "toolTipPadding": "5",
+          "showAllOutliers": '1'
         },
 
         "categories": [
           {
             "category": [
               {
-                "label": "Grade 1"
+                "label": this.selectedColumnforChart
               },
-              {
-                "label": "Grade 2"
-              },
-              {
-                "label": "Grade 3"
-              }
+
             ]
           }
         ],
         "dataset": [
           {
-            "seriesname": "Male",
+            "seriesname": this.selectedColumnforChart,
             "lowerBoxColor": "#0075c2",
             "upperBoxColor": "#1aaf5d",
             "data": [
               {
-                "value": "2400,2000,2500,2800,3500,4000, 3700, 3750, 3880, 5000,5500,7500,8000,8200, 8400, 8500, 8550, 8800, 8700, 9000, 14000"
-              },
-              {
-                "value": "7500,9000,12000,13000,14000,16500,17000, 18000, 19000, 19500"
-              },
-              {
-                "value": "15000,19000,25000,32000,50000,65000"
-              },
-
+                "value": (this.boxplotValues).toString(),
+                "outliers": (this.outlierValues).toString()
+              }
 
             ],
-            "outliers": "1",
-            "outlierIconRadius": "5",
-            "outlierIconSides": "5",
-            "outlierIconShape": "triangle",
-            "outlierIconColor": "ff0000",
-            "outlierIconAlpha": "70"
-          },
-          {
-            "seriesname": "Female",
-            "lowerBoxColor": "#f45b00",
-            "upperBoxColor": "#f2c500",
-            "data": [
-              {
-                "value": "1900,2100,2300,2350,2400,2550,3000,3500,4000, 6000, 6500, 9000"
-              },
-              {
-                "value": "7000,8000,8300,8700,9500,11000,15000, 17000, 21000"
-              },
-              {
-                "value": "24000,32000,35000,37000,39000, 58000"
-              }
-            ]
+
           }
         ]
 
       };
   }
 
-  getTreatedMissingValues() {
-    this.treatedNaItems = {
-      'columns': ['Name', 'Age', 'Gender', 'Height', 'Weight', 'BMI'],
-      'treatment-type': ['mode', 'mean', 'mode', 'mean', 'mean', 'mean']
+  prepareHistogram() {
+    this.dataSourceForHistogram = {
+      "chart": {
+        "theme": "fusion",
+        "caption": "Sales Trends",
+        "subcaption": "2016 - 2017",
+        "xaxisname": "Month",
+        "yaxisname": "Revenue",
+        "showvalues": "0",
+        "numberprefix": "$",
+        // "numVisiblePlot": "12",
+        // "scrollheight": "10",
+        // "flatScrollBars": "1",
+        // "scrollShowButtons": "0",
+        // "scrollColor": "#cccccc",
+        "showHoverEffect": "1"
+      },
+
+      "data": this.histogramValues
+
     }
+    console.log(this.dataSourceForHistogram);
   }
 }

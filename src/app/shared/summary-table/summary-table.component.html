@@ -1,59 +1,44 @@
 <table *ngIf="isSummary">
     <tr>
         <th></th>
-        <th *ngFor="let item of cols[0]">{{item}}</th>
+        <th *ngFor="let item of cols">{{item}}</th>
     </tr>
-    <tr *ngFor="let val of rows[0]; let i=index;">
+    <tr *ngFor="let val of rows; let i=index;">
         <ng-container *ngIf="i==0">
             <td><span class="span-font">Count</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==1">
             <td><span class="span-font">Mean</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==2">
             <td><span class="span-font">Std</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==3">
             <td><span class="span-font">Min</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==4">
             <td><span class="span-font">25%</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==5">
             <td><span class="span-font">50%</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==6">
             <td><span class="span-font">75%</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
         <ng-container *ngIf="i==7">
             <td><span class="span-font">Max</span></td>
-            <td *ngFor="let item of cols[0]">{{val[item]}}</td>
+            <td *ngFor="let item of cols">{{val[item]}}</td>
         </ng-container>
     </tr>
 </table>
 
-<!-- <table *ngIf="!isSummary && !isSkewness">
-    <tr>
-        <th></th>
-        <th *ngFor="let item of columns">{{item}}</th>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[0])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[0]['count']">{{val}}</td>
-    </tr>
-    <tr>
-        <td *ngFor="let key of objectKeys(describeRows[1])"><span class="span-font">{{key}}</span></td>
-        <td *ngFor="let val of describeRows[1]['percentage']">{{val}}</td>
-    </tr>
-</table>
--->
 <table *ngIf="isSkewness">
     <tr>
         <th>Columns</th>
@@ -66,14 +51,26 @@
         <!-- <th></th> -->
         <td>{{item}}</td>
         <td>{{rows[item]}}</td>
-        <td *ngIf="rows[item]>=0">
-            <strong> {{
-            (rows[item] == 0 || rows[item] < 0.1 ) ?  'No Skewness' : (rows[item] >= 0.1 && rows[item] <= 1) ?
-                 'Moderately Right Skewed ' : 'Highly Right Skewed' }} </strong>
+        <td *ngIf="rows[item] >= -0.5 && rows[item] <= 0.5">
+            <mat-chip-list>
+                <mat-chip color="primary">No Skewness</mat-chip>
+            </mat-chip-list>
         </td>
-        <td *ngIf="rows[item]< 0">
-            <strong>
-                {{(rows[item] >= -0.1  )? 'No Skewness' : (rows[item] < -0.1 && rows[item] <= -1) ? 'Moderately Left Skewed ' : 'Highly Left Skewed' }}</strong>
+        <td *ngIf="rows[item]>0.5">
+            <mat-chip-list>
+                <mat-chip color="primary" selected *ngIf="(rows[item] > 0.5 && rows[item] <= 5 )">Moderately Right
+                    Skewed</mat-chip>
+                <mat-chip color="warn" selected *ngIf="(rows[item] > 5)">Highly Right Skewed</mat-chip>
+            </mat-chip-list>
+        </td>
+        <td *ngIf="rows[item]< -0.5">
+            <mat-chip-list>
+                <mat-chip color="primary" selected *ngIf=" (rows[item] < -0.5 && rows[item] >= -5)">Moderately Left
+                    Skewed
+                </mat-chip>
+                <mat-chip color="warn" selected *ngIf="(rows[item] < -5.0)">Highly Left Skewed</mat-chip>
+            </mat-chip-list>
+
         </td>
         <td>{{kurtosis_rows[item]}}</td>
     </tr>
