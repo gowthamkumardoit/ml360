@@ -1,37 +1,22 @@
 <div class="container">
     <div class="fs_container">
-        <div class="fs-enable">
-            <mat-card>
-                <mat-card-title>Feature Selection </mat-card-title>
-                <mat-card-subtitle>It will enable / disable the feature selection.</mat-card-subtitle>
-
-                <mat-card-content class="fs-scroll">
-                    <mat-divider></mat-divider>
-                    <div style="display: flex; margin-top: 20px; flex-direction: row; ">
-                    </div>
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top:10px;">
-                        <p style="margin-top:20px;"> Select target variable:</p>
-                        <mat-form-field style="margin-left: 10px;">
-                            <mat-label>Select an option</mat-label>
-                            <mat-select [(value)]="selectedTargetVariable">
-                                <mat-option *ngFor="let item of variables" [value]="item.column">{{item.column}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                        <div>
-                            <button mat-raised-button color="primary" (click)="getMissingValues()">Proceed</button>
-                        </div>
-
-                    </div>
-
-
-                </mat-card-content>
-            </mat-card>
-        </div>
-        <div class="fs-na">
+        <div class="fs-na  mat-elevation-z3">
             <mat-card>
                 <mat-card-title>Treatment of Missing values</mat-card-title>
                 <mat-card-subtitle>Displays how the missing values are treated dynamically.</mat-card-subtitle>
+                <div style="display: flex; flex-direction: row; justify-content: space-between; margin-top:10px;">
+                    <p style="margin-top:20px;"> Select target variable:</p>
+                    <mat-form-field style="margin-left: 10px;">
+                        <mat-label>Select an option</mat-label>
+                        <mat-select [(value)]="selectedTargetVariable">
+                            <mat-option *ngFor="let item of variables" [value]="item.column">{{item.column}}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <div>
+                        <button mat-raised-button color="primary" (click)="getMissingValues()">Proceed</button>
+                    </div>
+                </div>
                 <mat-card-content class="fs-scroll">
                     <table>
                         <tr>
@@ -50,42 +35,58 @@
         </div>
 
     </div>
-    <div class="fs-plots mat-elevation-z3">
-        <mat-card>
-            <mat-card-title>Plots </mat-card-title>
-            <mat-card-subtitle>It will display the box-plot based upon the column selection.</mat-card-subtitle>
 
-            <mat-card-content class="fs-scroll" style="display: flex; ">
-                <mat-divider></mat-divider>
-                <h3>Select column&nbsp; &nbsp; &nbsp;
-                    <mat-form-field>
-                        <mat-label>Select an option</mat-label>
-                        <mat-select [(value)]="selectedColumnforChart" (selectionChange)="loadChart()">
-                            <mat-option *ngFor="let item of variables" [value]="item.column">{{item.column}}
-                            </mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </h3>
+    <div class="fs_container">
+        <div class="fs-na  mat-elevation-z3">
+            <mat-card>
+                <mat-card-title>Feature Selected Columns</mat-card-title>
+                <mat-card-subtitle>Displays the importance of the feature selected columns.</mat-card-subtitle>
+                <mat-card-content>
+                    <app-bar *ngIf="dataSourceOfBarChart" [dataSource]="dataSourceOfBarChart"></app-bar>
+                </mat-card-content>
+            </mat-card>
 
-                <div class="chart-container">
-                    <app-box-plot [dataSource]="dataSource"></app-box-plot>
-                    <app-histogram [dataSource]="dataSourceForHistogram"></app-histogram>
-                </div>
-
-            </mat-card-content>
-        </mat-card>
+        </div>
     </div>
+    <div class="fs_container">
+        <div class="fs-na mat-elevation-z3">
+            <mat-card>
+                <mat-card-title>Box Plots </mat-card-title>
+                <mat-card-subtitle>Outlier Visualization for numerical columns.</mat-card-subtitle>
 
-    <div class="fs-columns mat-elevation-z3">
-        <mat-card>
-            <mat-card-title>Choose columns </mat-card-title>
-            <mat-card-subtitle>You can add the columns in addition with feature selection columns for train the model.
-            </mat-card-subtitle>
+                <mat-card-content class="fs-scroll" style="display: flex; flex-direction: column;">
+                    <mat-divider></mat-divider>
+                    <h3>Select column&nbsp; &nbsp; &nbsp;
+                        <mat-form-field>
+                            <mat-label>Select an option</mat-label>
+                            <mat-select [(value)]="selectedColumnforChart" (selectionChange)="loadChart()">
+                                <mat-option *ngFor="let item of variables" [value]="item.column">{{item.column}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </h3>
 
-            <mat-card-content class="fs-scroll" style="display: flex; ">
-                <app-drag-drop></app-drag-drop>
-            </mat-card-content>
-        </mat-card>
+                    <div class="chart-container" *ngIf="dataSource">
+                        <app-box-plot [dataSource]="dataSource"></app-box-plot>
+                    </div>
+
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+    <div class="fs_container">
+        <div class="fs-na mat-elevation-z3">
+            <mat-card>
+                <mat-card-title>Choose columns </mat-card-title>
+                <mat-card-subtitle>You can add the columns in addition with feature selection columns for train the
+                    model.
+                </mat-card-subtitle>
+
+                <mat-card-content >
+                    <app-drag-drop ></app-drag-drop>
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
 
     <div class="next-button">

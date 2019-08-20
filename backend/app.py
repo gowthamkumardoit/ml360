@@ -5,6 +5,7 @@ import pandas as pd
 import simplejson as json
 import numpy as np
 import Eda_imputation_new as eda
+import feature_selection as fs
 
 app = Flask(__name__)
 CORS(app)
@@ -150,10 +151,14 @@ def getImputedResult():
         else:
             data = pd.read_excel(url)
 
-        result = eda.imputation(data, res['targetColumn'])
-        print(result)
+        treatedTypesList, null_treated_df = eda.imputation(data)
+        print(null_treated_df.info())
+        feature_columns, feature_columns_values = fs.feature_selection(null_treated_df, res['targetColumn'])
+      
         return jsonify({
-            'result': result
+            'treatedTypesList': treatedTypesList,
+            'feature_columns': feature_columns,
+            'feature_columns_values': feature_columns_values
         })
 
 if __name__ == '__main__':

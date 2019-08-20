@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FeatureSelectionService } from 'src/app/services/feature-selection.service';
 import * as _ from 'lodash';
+import { BehaviorSubject } from 'rxjs';
+import { MatDialog } from '@angular/material';
+import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
 
 @Component({
   selector: 'app-feature-selection',
@@ -11,16 +14,19 @@ export class FeatureSelectionComponent implements OnInit {
   treatedNaItems = {};
   objectKeys = Object.keys;
   variables: any = [];
-  dataSource = {};
+  dataSource: any;
   selectedTargetVariable: any;
   selectedColumnforChart: any;
   boxplotValues: any;
   outlierValues: any;
-  dataSourceForHistogram = {};
+  dataSourceForHistogram: any;
   histogramValues = [];
   naValuesTreatedColumns: any = [];
   naValuesTreatedValues: any = [];
-  constructor(private featureSelectionService: FeatureSelectionService) { }
+  dataSourceOfBarChart: any;
+  feature_columns: any;
+  
+  constructor(private featureSelectionService: FeatureSelectionService, public dialog: MatDialog) { }
 
   ngOnInit() {
     const columns = JSON.parse(localStorage.getItem('selectedData'));
@@ -37,25 +43,38 @@ export class FeatureSelectionComponent implements OnInit {
     localStorage.setItem('targetColumn', this.selectedTargetVariable);
     let selectedFile = JSON.parse(localStorage.getItem('load_api_data'));
     const postData = { ...selectedFile, 'targetColumn': this.selectedTargetVariable };
+    this.callSpinner();
     this.featureSelectionService.getMissingValues(postData).then((response: any) => {
-      if(response) {
-        let tempRes = response.result;
+      if (response) {
+        let tempRes = response.treatedTypesList;
+        let feature_columns_values = response.feature_columns_values;
+        this.feature_columns = response.feature_columns;
         this.naValuesTreatedColumns = [];
         this.naValuesTreatedValues = [];
+
+        this.featureSelectionService.dragAndDrop.next({'original': this.variables, 'featured': this.feature_columns});
         let key;
         tempRes.forEach((elem, i) => {
           key = Object.keys(elem);
           this.naValuesTreatedColumns.push(Object.keys(elem));
           this.naValuesTreatedValues.push(elem[key]);
         });
+
+        let tempValues = feature_columns_values.map((ele, i) => {
+          return { "label": ele.Variables, "value": ele.Importance * 100 };
+        });
         this.getTreatedMissingValues();
+        this.prepareBarChart(tempValues);
+        this.dialog.closeAll();
       }
     }).catch((err) => {
       console.log(err);
     })
   }
 
-
+	callSpinner() {
+		this.dialog.open(SpinnerComponent, { disableClose: true });
+	}
   getTreatedMissingValues() {
     this.treatedNaItems = {
       'columns': this.naValuesTreatedColumns,
@@ -153,5 +172,20 @@ export class FeatureSelectionComponent implements OnInit {
 
     }
     console.log(this.dataSourceForHistogram);
+  }
+
+  prepareBarChart(data) {
+    this.dataSourceOfBarChart = {
+      "chart": {
+        "theme": "fusion",
+        "caption": "Feature Importance",
+        "subCaption": "(In Percentage)",
+        "yAxisName": "Variables",
+        "xAxisName": "Relative Importance",
+        "numberSuffix": "%",
+        "alignCaptionWithCanvas": "0"
+      },
+      "data": data
+    }
   }
 }

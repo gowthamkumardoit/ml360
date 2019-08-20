@@ -47,12 +47,14 @@ export class PreviewService {
         const individualDocs = [];
         return new Promise((resolve) => {
             docRef.get().then((doc) => {
+                console.log(doc);
                 if (doc.exists) {
                     downloadObj = doc.data().url.filter((item) => {
-                        return Object.keys(item) === data.docId;
+                        return Object.keys(item) == data.docId;
                     });
+                    console.log(downloadObj);
                     downloadObj.filter((item) => {
-                        if (Object.keys(item) === data.docId) {
+                        if (Object.keys(item) == data.docId) {
                             individualDocs.push(item[data.docId]);
                         }
                     });
@@ -61,6 +63,7 @@ export class PreviewService {
                     console.log('No such document!');
                 }
             }).then(() => {
+                console.log(individualDocs);
                 const ext = data.name.substring(data.name.lastIndexOf('.') + 1, data.name.length) || data.name;
                 this.passFileFromFirebasetoBackend({ downloadURL: individualDocs[0], extension: ext, ...data }).then((res) => {
                     console.log('promise');

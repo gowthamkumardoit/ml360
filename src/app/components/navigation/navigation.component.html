@@ -1,8 +1,8 @@
 <mat-toolbar color="primary" class="mat-elevation-z3 " id="mainToolbar">
   <mat-icon (click)="showSideNav()" style="cursor: pointer" *ngIf="isLoggedIn">menu</mat-icon>
-  <a mat-button [routerLink]="'/home'"
-    ><span class="home-class">ML 360</span></a
-  >
+  <a mat-button [routerLink]="'/home'"><span class="home-class">
+      ML 360<mat-icon style="cursor: pointer">bubble_chart</mat-icon>
+    </span></a>
   <span class="toolbarSpacer"></span>
   <ng-container *ngIf="isLoggedIn">
     <div *ngFor="let link of navLinks" routerLinkActive="active-route">
@@ -14,23 +14,10 @@
 
   <!-- This fills the remaining space of the current row -->
   <span class="toolbarSpacer"></span>
-  <a
-    style="margin-left: 10px;"
-    mat-raised-button
-    color="accent"
-    *ngIf="!isLoggedIn"
-    [routerLink]="'/signup'"
-    routerLinkActive
-    >Signup</a
-  >
-  <button
-    mat-mini-fab
-    [matMenuTriggerFor]="avatarDropMenu"
-    class="toolbar-avatar"
-    *ngIf="isLoggedIn && user?.photoURL"
-    color="primary"
-    [ngStyle]="{ 'background-image': 'url(' + user?.photoURL + ')' }"
-  ></button>
+  <a style="margin-left: 10px;" mat-raised-button color="accent" *ngIf="!isLoggedIn" [routerLink]="'/signup'"
+    routerLinkActive>Signup</a>
+  <button mat-mini-fab [matMenuTriggerFor]="avatarDropMenu" class="toolbar-avatar" *ngIf="isLoggedIn && user?.photoURL"
+    color="primary" [ngStyle]="{ 'background-image': 'url(' + user?.photoURL + ')' }"></button>
 </mat-toolbar>
 
 <mat-menu #avatarDropMenu="matMenu">

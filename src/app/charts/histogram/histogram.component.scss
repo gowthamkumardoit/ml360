@@ -1,0 +1,15 @@
+.bar rect {
+    shape-rendering: crispEdges;
+  }
+  
+  .bar text {
+    fill: #999999;
+  }
+  
+  .axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+  }
+  
+  // #chart1 { position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; }

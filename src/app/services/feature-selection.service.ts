@@ -2,10 +2,13 @@ import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material';
 import { HttpClient } from '@angular/common/http';
 import { URL, PORT } from '../constant/app.constants';
+import { BehaviorSubject } from 'rxjs';
 @Injectable({
     providedIn: 'root'
 })
+
 export class FeatureSelectionService {
+    dragAndDrop: BehaviorSubject<Object> = new BehaviorSubject({})
     user;
     url = URL;
     port = PORT;

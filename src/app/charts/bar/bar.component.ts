@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-bar',
@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./bar.component.scss']
 })
 export class BarComponent implements OnInit {
-
+  @Input('dataSource') dataSource; 
   constructor() { }
 
   ngOnInit() {

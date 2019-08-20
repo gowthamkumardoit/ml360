@@ -132,7 +132,7 @@ def num_cat_separation(data):
     return list(col_names_updated_num), list(col_names_updated_cat)
 
 
-def imputation(data, target):
+def imputation(data):
 
     data = basic_eda(data)
 
@@ -140,6 +140,9 @@ def imputation(data, target):
     percent_of_missing = data.isnull().sum() * 100 / len(data)
     missing_value_data = pd.DataFrame(
         {'percent_missing': percent_of_missing, 'Count_of_Missing_Values ': count_of_null})
+
+    global numerical_column_names
+    global categorical_column_names
 
     numerical_column_names, categorical_column_names = num_cat_separation(data)
 
@@ -150,8 +153,8 @@ def imputation(data, target):
     cols_to_be_imputed = missing_value_data[missing_value_data['percent_missing'] > 0].sort_values(
         'percent_missing', ascending=False).index
     cols_to_be_imputed = list(cols_to_be_imputed)
-    if 'target' in cols_to_be_imputed:
-        cols_to_be_imputed.remove('target')
+    # if target in cols_to_be_imputed:
+    #     cols_to_be_imputed.remove(target)
 
     Imputed_column_array = []
     for i in cols_to_be_imputed:
@@ -189,6 +192,9 @@ def imputation(data, target):
 
         above_15_percent_columns = missing_value_data[missing_value_data['percent_missing'] > 15].index
         above_15_percent_columns = list(above_15_percent_columns)
+        if i in above_15_percent_columns:
+            above_15_percent_columns.remove(i)
+            
         data_dup_train = data_dup_train.drop(above_15_percent_columns, axis=1)
         data_dup_test = data_dup_test.drop(above_15_percent_columns, axis=1)
 
@@ -266,4 +272,4 @@ def imputation(data, target):
 
         data_null_treated[i] = predicted
 
-    return Imputed_column_array
+    return (Imputed_column_array, data_null_treated)

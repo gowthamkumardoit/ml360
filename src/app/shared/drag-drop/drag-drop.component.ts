@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { FeatureSelectionService } from 'src/app/services/feature-selection.service';
 
 @Component({
   selector: 'app-drag-drop',
@@ -7,22 +8,26 @@ import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/dr
   styleUrls: ['./drag-drop.component.scss']
 })
 export class DragDropComponent implements OnInit {
-
-  constructor() { }
+  original_columns: any[] =[];
+  feature_columns: any;
+  constructor(private featureSelectionService: FeatureSelectionService) { }
 
   ngOnInit() {
+    this.featureSelectionService.dragAndDrop.subscribe((data: any) => {
+      console.table('data', data);
+      this.original_columns = [];
+      if (data && data.original) {
+        data.original.forEach(ele => {
+          this.original_columns.push(ele.column);
+        })
+        this.feature_columns = data.featured;
+      }
+    });
+    console.log('----',  this.featureSelectionService.dragAndDrop);
   }
-  todo = [
-    'Age',
-    'Name',
-    'Gender'
-  ];
 
-  done = [
-    'Height',
-    'Weight',
-    'BMI'
-  ];
+
+
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
