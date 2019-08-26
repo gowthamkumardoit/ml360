@@ -7,6 +7,7 @@ import { Animations } from '../../animations/fadein-fadeout.animation';
 import { Router } from '@angular/router';
 import { AlertsService } from 'src/app/services/alert.service';
 import { HomeService } from 'src/app/services/home.service';
+import { TourService } from 'ngx-tour-md-menu';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -39,12 +40,61 @@ export class HomeComponent implements OnInit {
 
   // tslint:disable-next-line:max-line-length
   constructor(private afauth: AngularFireAuth, private storage: AngularFireStorage, private router: Router, private alertsService: AlertsService,
-     // tslint:disable-next-line:align
-     private homeService: HomeService) {
+    // tslint:disable-next-line:align
+    private homeService: HomeService, private tourService: TourService) {
 
   }
 
   ngOnInit() {
+    this.tourService.initialize([{
+      anchorId: 'fileId',
+      content: 'Click the upload button to upload csv / tsv / xlsx file to proceed.',
+      title: 'Upload File',
+    }, {
+      anchorId: 'delimitorId',
+      content: 'Select the delimitor for the uploaded file. (Supported delimitors comma, semi-colon, tab, pipe)',
+      title: 'Delimitor Selection',
+
+
+    },
+    {
+      anchorId: 'fileSelectionId',
+      content: 'Select the file to see the descriptive statistic analysis of the data.',
+      title: 'Select the File',
+      route: '/preview'
+
+    },
+    {
+      anchorId: 'previewId',
+      content: 'It shows the first five rows of the dataset.',
+      title: 'Preview',
+
+    },
+    {
+      anchorId: 'summaryId',
+      content: 'It shows the statistics part of the  dataset. (ex: Mean, Median, Mode, 25th, 50th, 75th Percentile and Min and Max values)',
+      title: 'Summary',
+
+    },
+    {
+      anchorId: 'missingValuesId',
+      content: 'It plots the missing values present in the dataset in numbers and percentage.',
+      title: 'Missing Value',
+
+    },
+    {
+      anchorId: 'skewnessId',
+      content: 'It displays how the data is skewed. (right-skewed, left-skewed)',
+      title: 'Preview',
+
+    },
+    {
+      anchorId: 'previewNextId',
+      content: 'Click next to see the feature engineering of the dataset.',
+      title: 'Next',
+
+    }], { placement: 'left' });
+    // this.tourService.start();
   }
 
   // Selecting the delimiter of the uploaded file.
