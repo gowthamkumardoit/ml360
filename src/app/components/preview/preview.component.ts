@@ -7,7 +7,6 @@ import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
 import { ActivatedRoute } from '@angular/router';
 import { MISSING_NA_CHART } from '../../constant/chart.constants';
 import { TOOLTIPS } from '../../constant/app.constants';
-import { TourService } from 'ngx-tour-md-menu';
 
 @Component({
 	selector: 'app-preview',
@@ -40,7 +39,7 @@ export class PreviewComponent implements OnInit {
 	resovledData: any;
 	tooltips = {};
 	constructor(private previewService: PreviewService, private authService: AuthService,
-		public dialog: MatDialog, private activatedRoute: ActivatedRoute, private tourService: TourService) {
+		public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
 		this.isFileSelected = false;
 	}
 
