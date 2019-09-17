@@ -4,6 +4,8 @@ import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { MatDialog } from '@angular/material';
 import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feature-selection',
@@ -25,8 +27,9 @@ export class FeatureSelectionComponent implements OnInit {
   naValuesTreatedValues: any = [];
   dataSourceOfBarChart: any;
   feature_columns: any;
-  
-  constructor(private featureSelectionService: FeatureSelectionService, public dialog: MatDialog) { }
+  radioFormGroup: FormGroup;
+
+  constructor(private featureSelectionService: FeatureSelectionService, public dialog: MatDialog, private fb: FormBuilder, private router: Router) { }
 
   ngOnInit() {
     const columns = JSON.parse(localStorage.getItem('selectedData'));
@@ -37,12 +40,17 @@ export class FeatureSelectionComponent implements OnInit {
       });
       this.variables = newColumns;
     }
+    this.radioFormGroup = new FormGroup({
+      variableType: new FormControl('', Validators.required)
+    });
+    this.radioFormGroup.setValue({ variableType: 'category' });
   }
 
   getMissingValues() {
     localStorage.setItem('targetColumn', this.selectedTargetVariable);
     let selectedFile = JSON.parse(localStorage.getItem('load_api_data'));
-    const postData = { ...selectedFile, 'targetColumn': this.selectedTargetVariable };
+    console.log(this.radioFormGroup.value);
+    const postData = { ...selectedFile, 'targetColumn': this.selectedTargetVariable, 'targetType': this.radioFormGroup.value.variableType };
     this.callSpinner();
     this.featureSelectionService.getMissingValues(postData).then((response: any) => {
       if (response) {
@@ -52,7 +60,7 @@ export class FeatureSelectionComponent implements OnInit {
         this.naValuesTreatedColumns = [];
         this.naValuesTreatedValues = [];
 
-        this.featureSelectionService.dragAndDrop.next({'original': this.variables, 'featured': this.feature_columns});
+        this.featureSelectionService.dragAndDrop.next({ 'original': this.variables, 'featured': this.feature_columns });
         let key;
         tempRes.forEach((elem, i) => {
           key = Object.keys(elem);
@@ -72,14 +80,21 @@ export class FeatureSelectionComponent implements OnInit {
     })
   }
 
-	callSpinner() {
-		this.dialog.open(SpinnerComponent, { disableClose: true });
-	}
+  callSpinner() {
+    this.dialog.open(SpinnerComponent, { disableClose: true });
+  }
   getTreatedMissingValues() {
     this.treatedNaItems = {
       'columns': this.naValuesTreatedColumns,
       'treatment-type': this.naValuesTreatedValues
     }
+  }
+
+  startML() {
+    this.router.navigate(['/result']);
+    const variableType = this.radioFormGroup.value.variableType;
+    localStorage.setItem('variableType', variableType);
+
   }
 
   loadChart() {
@@ -160,18 +175,10 @@ export class FeatureSelectionComponent implements OnInit {
         "yaxisname": "Revenue",
         "showvalues": "0",
         "numberprefix": "$",
-        // "numVisiblePlot": "12",
-        // "scrollheight": "10",
-        // "flatScrollBars": "1",
-        // "scrollShowButtons": "0",
-        // "scrollColor": "#cccccc",
         "showHoverEffect": "1"
       },
-
       "data": this.histogramValues
-
     }
-    console.log(this.dataSourceForHistogram);
   }
 
   prepareBarChart(data) {

@@ -1,6 +1,6 @@
 <div class="result-container">
     <div class="algorithm-container" *ngFor="let item of algorithmArray">
-        <mat-card>
+        <mat-card *ngIf="variableType== 'category'">
             <mat-card-header class="header">
                 <mat-card-title>{{item.title}}</mat-card-title>
                 <mat-card-subtitle>{{item.subtitle}}</mat-card-subtitle>
@@ -10,17 +10,48 @@
                     <mat-divider></mat-divider>
                     <mat-list-item>
                         <mat-icon matListIcon>check</mat-icon>
-                        <p matLine class="strong-font">RMSE</p> {{item.rmse}}
+                        <p matLine class="strong-font">Accuracy</p> {{item.acc * 100 | number }}%
                     </mat-list-item>
                     <mat-divider></mat-divider>
                     <mat-list-item>
                         <mat-icon matListIcon>check</mat-icon>
-                        <p matLine class="strong-font">R-Square</p> {{item.r_square}}
+                        <p matLine class="strong-font">AUC</p> {{item.auc * 100 | number}}%
                     </mat-list-item>
                     <mat-divider></mat-divider>
                     <mat-list-item>
                         <mat-icon matListIcon>check</mat-icon>
-                        <p matLine class="strong-font">Adjusted R-Square</p> {{item.adj_r_square}}
+                        <p matLine class="strong-font">F1 Score</p>
+                        <ng-container *ngFor="let score of item.f1_score">
+                            {{score * 100 | number}}%
+                        </ng-container>
+
+                    </mat-list-item>
+                </mat-list>
+            </mat-card-content>
+            <mat-card-footer></mat-card-footer>
+        </mat-card>
+        <mat-card *ngIf="variableType== 'numeric'">
+            <mat-card-header class="header">
+                <mat-card-title>{{item.title}}</mat-card-title>
+                <mat-card-subtitle>{{item.subtitle}}</mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <mat-list>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">R-Square</p> {{item.r_square * 100 | number }}%
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">RMSE</p> {{item.RMSE | number}}
+                    </mat-list-item>
+                    <mat-divider></mat-divider>
+                    <mat-list-item>
+                        <mat-icon matListIcon>check</mat-icon>
+                        <p matLine class="strong-font">Adjusted R-Square</p>{{item.adj_r_square * 100 | number}}%
+
                     </mat-list-item>
                 </mat-list>
             </mat-card-content>
@@ -30,7 +61,7 @@
 
 </div>
 
-<div class="formula-container-wrapper ">
+<!-- <div class="formula-container-wrapper ">
     <div class="formula-container mat-elevation-z3">
         <mat-card>
             <mat-card-header>
@@ -54,4 +85,4 @@
             <mat-card-footer></mat-card-footer>
         </mat-card>
     </div>
-</div>
+</div> -->

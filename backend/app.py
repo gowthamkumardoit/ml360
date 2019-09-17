@@ -5,7 +5,7 @@ import pandas as pd
 import simplejson as json
 import numpy as np
 import Eda_imputation_new as eda
-import feature_selection as fs
+# import feature_selection as fs
 
 app = Flask(__name__)
 CORS(app)
@@ -135,6 +135,7 @@ def getImputedResult():
         postData = request.data
         res = json.loads((postData))
         url = (res['downloadURL'])
+        targetType= (res['targetType'])
 
         if res['delimiter'] == 'comma':
             sep = ','
@@ -153,13 +154,68 @@ def getImputedResult():
 
         treatedTypesList, null_treated_df = eda.imputation(data)
         print(null_treated_df.info())
-        feature_columns, feature_columns_values = fs.feature_selection(null_treated_df, res['targetColumn'])
-      
+        feature_columns, feature_columns_values = eda.feature_selection(null_treated_df, res['targetColumn'], targetType)
+        print('Final Data for Modelling')
         return jsonify({
             'treatedTypesList': treatedTypesList,
             'feature_columns': feature_columns,
             'feature_columns_values': feature_columns_values
         })
+
+@app.route('/api/models/regressor/linear',  methods=['POST'])
+def linear():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+    linear_regression_outcomes = eda.LinearRegression_modelling(target)
+    return linear_regression_outcomes
+
+@app.route('/api/models/regressor/random-forest',  methods=['POST'])
+def RandomForestRegressor():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+    random_forest_regression_outcomes = eda.RandomForest_modelling_regressor(target)
+    return random_forest_regression_outcomes
+
+@app.route('/api/models/regressor/knn',  methods=['POST'])
+def KNN():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+    knn_regression_outcomes = eda.KNN_modelling_scaled(target)
+    return knn_regression_outcomes
+
+
+@app.route('/api/models/classifier/logistic',  methods=['POST'])
+def Logistic():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+        logistic_outcomes = eda.LogisticRegression_modelling(target)
+        return logistic_outcomes
+
+@app.route('/api/models/classifier/random-forest',  methods=['POST'])
+def RandomForestModelling():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+        random_forest_modelling_outcomes = eda.RandomForest_modelling(target)
+        return random_forest_modelling_outcomes
+
+@app.route('/api/models/classifier/gb',  methods=['POST'])
+def GB():
+    if (request):
+        postData = request.data
+        res = json.loads((postData))
+        target = (res['target'])
+        gb_outcomes = eda.GB_modelling(target)
+        return gb_outcomes
 
 if __name__ == '__main__':
     app.run()

@@ -10,6 +10,18 @@ from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import train_test_split, cross_val_predict
 from sklearn.metrics import confusion_matrix, precision_score, recall_score, f1_score, auc, classification_report, roc_curve
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import GridSearchCV
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn import metrics
+from flask import jsonify
+import warnings
+warnings.filterwarnings("ignore")
+
+stdscaler = StandardScaler()
+labelencoder = LabelEncoder()
 
 
 def all_unique_values(data):
@@ -131,6 +143,11 @@ def num_cat_separation(data):
 
     return list(col_names_updated_num), list(col_names_updated_cat)
 
+## Metric for Regression
+def AdjustedRsqaure(N, p, R_square):
+    # N = length of dataset, p = Number of predictors 
+    result = 1 - (1 - R_square) * (N - 1) / (N - p - 1)
+    return result
 
 def imputation(data):
 
@@ -272,4 +289,232 @@ def imputation(data):
 
         data_null_treated[i] = predicted
 
+        #feature_selection(data_null_treated, target)
+
     return (Imputed_column_array, data_null_treated)
+
+def feature_selection(data_null_treated, target, target_type):
+    
+    final_features_choosed = []
+    ## Running Chisqaure for Categorical columns
+    if target_type == 'category':
+        chi_columns = data_null_treated[categorical_column_names].drop(target, axis = 1).columns
+    else:
+        chi_columns = data_null_treated[categorical_column_names].columns
+    p_value_for_chisq = []
+    name = []
+    for i in chi_columns:
+        cont = pd.crosstab(data_null_treated[i],
+                           data_null_treated[target])
+        name.append(i)
+        p_value_for_chisq.append(chi2_contingency(cont)[1])
+        chisqaure_df = pd.DataFrame({'Variables':name,'P_value':p_value_for_chisq})
+
+    ## Getting columns which are dependent to our target column at 90% confidence interval    
+    chi_square_imp_feature = chisqaure_df[chisqaure_df['P_value'] < 0.10]['Variables']
+
+    ## Getting dataframe with Categorical(which are dependent) and numerical columns
+    data_complete = pd.concat([data_null_treated[chi_square_imp_feature], data_null_treated[numerical_column_names]], axis = 1)
+    data_complete[target] = data_null_treated[[target]]
+    print(data_complete.info())
+
+
+    ## Running Random Forest for those important columns from chisquare
+    rf = RandomForestClassifier(n_estimators=500, max_depth=6, random_state=5000, min_samples_leaf=2)
+    x = data_complete.drop(target, axis = 1)
+    #y = data_complete[[target]]
+    y = np.asarray(data_complete[target], dtype = '|S6')
+    x = pd.get_dummies(x,  drop_first=True)
+    rf.fit(x,  y)
+    rf.score(x ,y)
+
+    ## Plotting those feature with their importance
+    variables = x.columns
+    importances = rf.feature_importances_
+    indices = np.argsort(importances)
+
+    ## Creating a dataframe with variables and their importance as well as the running total of the importance
+    variables = x.columns
+    feature_imp = pd.DataFrame({'Variables':variables, 'Importance':rf.feature_importances_})
+    feature_imp = feature_imp.sort_values('Importance', ascending = False).reset_index().drop('index', axis=1)
+    variable_imp_values = pd.Series(feature_imp['Importance'])
+    running_total = variable_imp_values.cumsum()
+    feature_imp['Running_Total'] = running_total
+    feature_imp
+
+    ##Proceeding with variables which contribute upto 90% 
+    final_variables = list(feature_imp[feature_imp['Running_Total'] < 0.94]['Variables'])
+
+    x_dummies = pd.get_dummies(data_complete.drop(target, axis = 1), drop_first=True)
+    global final_data_for_modelling
+    final_data_for_modelling = x_dummies[final_variables]
+    final_data_for_modelling[target] = data_complete[[target]]
+    final_features_choosed = final_data_for_modelling.columns
+    print(feature_imp,'\n\n')
+    return (list(final_features_choosed), feature_imp.to_dict(orient='records'))
+
+## Classification Models
+def LogisticRegression_modelling(target):
+    X = final_data_for_modelling.drop(target, axis = 1)
+    Y = final_data_for_modelling[[target]]
+    model = LogisticRegression()
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state = 555)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    prediction_prob = model.predict_proba(X_test)
+    Accuracy = metrics.accuracy_score(Y_test, prediction)
+    print('Accuracy :', Accuracy )
+    F1_score = metrics.f1_score(Y_test, prediction, pos_label=2, average=None)
+    print('F1_square :', F1_score )
+    AUC_score = metrics.roc_auc_score(Y_test, prediction_prob[:,1])
+    print('Test_auc :', AUC_score)
+    return jsonify({
+            'title': 'Logistic Regression',
+            'subtitle': 'Classifier Based Algorithm',
+            'acc': Accuracy,
+            'auc': AUC_score,
+            'f1_score': list(F1_score)
+        })
+def RandomForest_modelling(target):
+
+    X = final_data_for_modelling.drop(target,axis=1)
+    Y = final_data_for_modelling[[target]]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.25, random_state = 7)
+
+    param_grid = {'n_estimators':(100,150),'min_samples_split':np.arange(2,6),'max_depth':(5,6)}
+    gs = GridSearchCV(RandomForestClassifier(),param_grid=param_grid,cv=10)
+    gs.fit(X_train,Y_train)
+    n_estimators_gv, min_sample_leaf_gv, max_depth_gv = gs.best_params_['n_estimators'], gs.best_params_['max_depth'], gs.best_params_['min_samples_split']
+
+    model = RandomForestClassifier(max_depth =max_depth_gv , n_estimators=n_estimators_gv, min_samples_leaf=min_sample_leaf_gv)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    prediction_prob = model.predict_proba(X_test)
+    Accuracy = metrics.accuracy_score(Y_test, prediction)
+    print('Accuracy :', Accuracy )
+    F1_score = metrics.f1_score(Y_test, prediction, pos_label=2, average=None)
+    print('F1_square :', F1_score )
+    AUC_score = metrics.roc_auc_score(Y_test, prediction_prob[:,1])
+    print('Test_auc :', AUC_score)
+    return jsonify({
+            'title': 'Random Forest',
+            'subtitle': 'Classifier Based Algorithm',
+            'acc': Accuracy,
+            'auc': AUC_score,
+            'f1_score': list(F1_score)
+        })
+
+def GB_modelling(target):
+
+    X = final_data_for_modelling.drop(target,axis=1)
+    Y = final_data_for_modelling[[target]]
+
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.25, random_state = 7)
+
+    param_grid = {'n_estimators':(100,150),'min_samples_split':np.arange(2,6),'max_depth':(5,6)}
+    gs = GridSearchCV(RandomForestClassifier(),param_grid=param_grid,cv=10)
+    gs.fit(X_train,Y_train)
+    n_estimators_gv, min_sample_leaf_gv, max_depth_gv = gs.best_params_['n_estimators'], gs.best_params_['max_depth'], gs.best_params_['min_samples_split']
+
+    model = GradientBoostingClassifier(max_depth =max_depth_gv , n_estimators=n_estimators_gv, min_samples_leaf=min_sample_leaf_gv)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    prediction_prob = model.predict_proba(X_test)
+    Accuracy = metrics.accuracy_score(Y_test, prediction)
+    print('Accuracy :', Accuracy )
+    F1_score = metrics.f1_score(Y_test, prediction, pos_label=2, average=None)
+    print('F1_square :', F1_score )
+    AUC_score = metrics.roc_auc_score(Y_test, prediction_prob[:,1])
+    print('Test_auc :', AUC_score)
+
+    return jsonify({
+            'title': 'Gradient Boosting',
+            'subtitle': 'Classifier Based Algorithm',
+            'acc': Accuracy,
+            'auc': AUC_score,
+            'f1_score': list(F1_score)
+        })
+
+## Regression Models
+def LinearRegression_modelling(target):
+    X = final_data_for_modelling.drop(target, axis = 1)
+    X = pd.get_dummies(X)
+    print(final_data_for_modelling)
+    ##Variables for Adjusted R_sqaure
+    N = len(X)
+    p = X.shape[1]
+    
+    Y = final_data_for_modelling[[target]]
+    model = LinearRegression()
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state = 555)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    RMSE = np.sqrt(metrics.mean_squared_error(Y_test, prediction))
+    R_square = metrics.r2_score(Y_test, prediction)
+    Adjusted_r_square = AdjustedRsqaure(N, p, R_square)
+    print('LinearRegression :', RMSE)
+    return jsonify({
+            'title': 'Linear', 
+            'subtitle': 'Regression based algorithm',
+            'r_square': R_square,
+            'RMSE': RMSE,
+            'adj_r_square': Adjusted_r_square
+        })
+
+def RandomForest_modelling_regressor(target):
+    X = final_data_for_modelling.drop(target,axis=1)
+    X = pd.get_dummies(X)
+    Y = final_data_for_modelling[[target]]
+    
+    ##Variables for Adjusted R_sqaure
+    N = len(X)
+    p = X.shape[1]
+    
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.25, random_state = 7)
+
+    param_grid = {'n_estimators':(100,150),'min_samples_split':np.arange(2,6),'max_depth':(5,6)}
+    gs = GridSearchCV(RandomForestRegressor(),param_grid=param_grid,cv=10)
+    gs.fit(X_train,Y_train)
+    n_estimators_gv, min_sample_leaf_gv, max_depth_gv = gs.best_params_['n_estimators'], gs.best_params_['max_depth'], gs.best_params_['min_samples_split']
+
+    model = RandomForestRegressor(max_depth =max_depth_gv , n_estimators=n_estimators_gv, min_samples_leaf=min_sample_leaf_gv)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    RMSE = np.sqrt(metrics.mean_squared_error(Y_test, prediction))
+    R_square = metrics.r2_score(Y_test, prediction)
+    Adjusted_r_square = AdjustedRsqaure(N, p, R_square)
+    print('Random forest : ', RMSE)
+    return jsonify({
+            'title': 'Random Forest', 
+            'subtitle': 'Regression based algorithm',
+            'r_square': R_square,
+            'RMSE': RMSE,
+            'adj_r_square': Adjusted_r_square
+        })
+
+def KNN_modelling_scaled(target):
+    X = final_data_for_modelling.drop(target, axis = 1)
+    X = pd.get_dummies(X)
+    X = stdscaler.fit_transform(X)
+    Y = final_data_for_modelling[[target]]
+    
+    ##Variables for Adjusted R_sqaure
+    N = len(X)
+    p = X.shape[1]
+    
+    model = KNeighborsRegressor()
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.3, random_state = 555)
+    model.fit(X_train, Y_train)
+    prediction = model.predict(X_test)
+    RMSE = np.sqrt(metrics.mean_squared_error(Y_test, prediction))
+    R_square = metrics.r2_score(Y_test, prediction)
+    Adjusted_r_square = AdjustedRsqaure(N, p, R_square)
+    print('KNN :', RMSE)
+    return jsonify({
+            'title': 'KNN', 
+            'subtitle': 'Regression based algorithm',
+            'r_square': R_square,
+            'RMSE': RMSE,
+            'adj_r_square': Adjusted_r_square
+        })

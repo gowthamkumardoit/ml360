@@ -12,7 +12,15 @@
                             <mat-option *ngFor="let item of variables" [value]="item.column">{{item.column}}
                             </mat-option>
                         </mat-select>
+
                     </mat-form-field>
+                    <form [formGroup]="radioFormGroup" style="margin-top: 20px;">
+                        <mat-radio-group aria-label="Select an option" formControlName="variableType">
+                            <mat-radio-button value="category" >Categorical
+                            </mat-radio-button>
+                            <mat-radio-button style="margin-left: 10px;" value="numeric">Numerical</mat-radio-button>
+                        </mat-radio-group>
+                    </form>
                     <div>
                         <button mat-raised-button color="primary" (click)="getMissingValues()">Proceed</button>
                     </div>
@@ -82,15 +90,15 @@
                     model.
                 </mat-card-subtitle>
 
-                <mat-card-content >
-                    <app-drag-drop ></app-drag-drop>
+                <mat-card-content>
+                    <app-drag-drop></app-drag-drop>
                 </mat-card-content>
             </mat-card>
         </div>
     </div>
 
     <div class="next-button">
-        <button mat-raised-button routerLink="/result" color="primary">
+        <button mat-raised-button (click)="startML()" color="primary">
             Next <mat-icon>arrow_right_alt</mat-icon>
         </button>
     </div>

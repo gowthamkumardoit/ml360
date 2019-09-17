@@ -22,7 +22,6 @@ export class NavigationComponent implements OnInit {
     { path: '/preview', label: 'Descriptive Statistics' },
     { path: '/feature-selection', label: 'Feature Engineering' },
     { path: '/result', label: 'Result' },
-   // { path: '/history', label: 'History' }
     ];
 
 
@@ -43,7 +42,8 @@ export class NavigationComponent implements OnInit {
         this.router.navigate(['/login']);
         this.isLoggedIn = false;
         this.showSideNav();
-        localStorage.removeItem('targetColumn');
+        localStorage.clear();
+        console.log(localStorage.length);
       }
     });
 

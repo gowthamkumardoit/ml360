@@ -16,7 +16,7 @@ export class FeatureSelectionService {
     constructor(private snackBar: MatSnackBar, private http: HttpClient) {
         this.user = JSON.parse(localStorage.getItem('user'));
     }
- 
+
 
     loadChart(data) {
         return new Promise((resolve) => {
@@ -30,6 +30,61 @@ export class FeatureSelectionService {
     getMissingValues(data) {
         return new Promise((resolve) => {
             this.http.post(`${this.url}:${this.port}/api/imputedValues`, data).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+
+    executeLinearRegressionAlgorithm(obj) {
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/regressor/linear`, obj).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+
+    executeRandomForestRegressionAlgorithm(obj) {
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/regressor/random-forest`, obj).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+
+    executeKNNRegressionAlgorithm(obj) {
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/regressor/knn`, obj).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+
+    executeLogisticClassifierAlgorithm(obj) {
+        console.log(obj);
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/classifier/logistic`, obj).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+
+    executeRandomForestClassifierAlgorithm(obj) {
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/classifier/random-forest`, obj).subscribe((res) => {
+                console.log('response api', res);
+                resolve(res);
+            });
+        });
+    }
+    
+    executeGradientBoostClassifierAlgorithm(obj) {
+        return new Promise((resolve) => {
+            this.http.post(`${this.url}:${this.port}/api/models/classifier/gb`, obj).subscribe((res) => {
                 console.log('response api', res);
                 resolve(res);
             });

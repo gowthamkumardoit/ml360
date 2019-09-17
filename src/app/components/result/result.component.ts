@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FeatureSelectionService } from 'src/app/services/feature-selection.service';
+import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-result',
@@ -10,26 +13,57 @@ export class ResultComponent implements OnInit {
   algorithmArray: any = [];
   equation: any = [];
   finalEquation: any;
-  constructor() { }
+  variableType;
+  constructor(private featureSelectionService: FeatureSelectionService, private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.algorithmArray = [
-      { title: 'Linear', subtitle: 'Regression based algorithm', rmse: 13.222, r_square: 87.456, adj_r_square: 86.23 },
-      { title: 'KNN', subtitle: 'Regression based algorithm', rmse: 11.222, r_square: 89.456, adj_r_square: 88.23 },
-      { title: 'Random Forest', subtitle: 'Regression based algorithm', rmse: 10.222, r_square: 90.111, adj_r_square: 90.012 },
-    ];
-
-    this.equation = [
-      { col: 'Age', co_ef: '20.33' },
-      { col: 'Height', co_ef: '12.65' },
-      { col: 'Weight', co_ef: '3.81' },
-      { col: 'BMI', co_ef: '7.10' }
-    ];
-
-    this.finalEquation = this.equation.map((data) => {
-      return ' ' + data.co_ef + '';
-    });
+    setTimeout(() => {
+      this.executeAlgorithms();
+    }, 2000)
   }
-
+  executeAlgorithms() {
+    this.variableType = localStorage.getItem('variableType');
+    let targetColumn = localStorage.getItem('targetColumn');
+    let obj = { 'target': targetColumn };
+    this.algorithmArray = [];
+    if (this.variableType == 'numeric') {
+      this.callSpinner();
+      this.featureSelectionService.executeLinearRegressionAlgorithm(obj).then(
+        (res) => {
+          this.algorithmArray.push(res);
+          this.featureSelectionService.executeRandomForestRegressionAlgorithm(obj).then(
+            (res) => {
+              this.algorithmArray.push(res);
+              this.featureSelectionService.executeKNNRegressionAlgorithm(obj).then(
+                (res) => {
+                  this.algorithmArray.push(res);
+                  this.dialog.closeAll();
+                }
+              )
+            }
+          )
+        });
+    } else if (this.variableType == 'category') {
+      this.callSpinner();
+      this.featureSelectionService.executeLogisticClassifierAlgorithm(obj).then(
+        (res) => {
+          this.algorithmArray.push(res);
+          this.featureSelectionService.executeRandomForestClassifierAlgorithm(obj).then(
+            (res) => {
+              this.algorithmArray.push(res);
+              this.featureSelectionService.executeGradientBoostClassifierAlgorithm(obj).then(
+                (res) => {
+                  this.algorithmArray.push(res);
+                  this.dialog.closeAll();
+                }
+              )
+            }
+          )
+        });
+    }
+  }
+  callSpinner() {
+    this.dialog.open(SpinnerComponent, { disableClose: true });
+  }
 }
 
