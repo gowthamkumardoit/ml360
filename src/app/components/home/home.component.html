@@ -3,8 +3,8 @@
   <div class="eda-steps" *ngIf="isFileSubmitted">
 
   </div>
-  <form class="form">
-    <div class="file-upload-wrapper" [attr.data-text]="fileName">
+  <form class="form" >
+        <div class="file-upload-wrapper" [attr.data-text]="fileName"  tourAnchor="fileId">
       <input
         name="file-upload-field"
         type="file"
@@ -14,7 +14,7 @@
       />
     </div>
   </form>
-  <div style="margin-top: 20px;">
+  <div style="margin-top: 20px;" >
     <span style="margin-right: 30px;">Select the deliminator:</span>
     <mat-form-field>
       <mat-label>Select an option</mat-label>
@@ -33,6 +33,7 @@
       mat-raised-button
       color="primary"
       (click)="submit()"
+      tourAnchor="delimitorId"
     >
       Submit
     </button>

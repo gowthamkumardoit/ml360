@@ -35,8 +35,8 @@ export class PreviewService {
                 });
                 return filterdFiles;
             }),
-            first()
-        )
+            take(1)
+        );
     }
 
 

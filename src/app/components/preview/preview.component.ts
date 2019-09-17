@@ -7,6 +7,7 @@ import { SpinnerComponent } from 'src/app/shared/spinner/spinner.component';
 import { ActivatedRoute } from '@angular/router';
 import { MISSING_NA_CHART } from '../../constant/chart.constants';
 import { TOOLTIPS } from '../../constant/app.constants';
+import { TourService } from 'ngx-tour-md-menu';
 
 @Component({
 	selector: 'app-preview',
@@ -39,7 +40,7 @@ export class PreviewComponent implements OnInit {
 	resovledData: any;
 	tooltips = {};
 	constructor(private previewService: PreviewService, private authService: AuthService,
-		public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
+		public dialog: MatDialog, private activatedRoute: ActivatedRoute, private tourService: TourService) {
 		this.isFileSelected = false;
 	}
 
@@ -67,7 +68,7 @@ export class PreviewComponent implements OnInit {
 			this.callSpinner();
 			localStorage.setItem('selectedFile', JSON.stringify(this.fileControl.value));
 			this.previewService.getDownloadURLs(this.fileControl.value).then((response: any) => {
-				console.log('response',response);
+				console.log('response', response);
 				if (response) {
 					localStorage.setItem('selectedData', JSON.stringify(response));
 					this.getPreprocessedData(response);

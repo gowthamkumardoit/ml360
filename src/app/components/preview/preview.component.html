@@ -3,7 +3,7 @@
 		<mat-card>
 			<mat-card-content class="preview-scroll">
 				<span class="select-file-name">Select File:</span>
-				<mat-form-field>
+				<mat-form-field tourAnchor="fileSelectionId">
 					<mat-label>Selected file</mat-label>
 					<mat-select [formControl]="fileControl" required (selectionChange)="fileSelectionEvent()">
 						<mat-option>--</mat-option>
@@ -20,8 +20,8 @@
 		</mat-card>
 	</div>
 	<div class="preview mat-elevation-z3">
-		<mat-card>
-			<mat-card-title>Preview
+		<mat-card tourAnchor="previewId">
+			<mat-card-title >Preview
 				<button mat-icon-button class="more-button">
 					<mat-icon [matTooltip]="tooltips.head" matTooltipPosition="left">settings_ethernet</mat-icon>
 				</button>
@@ -30,28 +30,28 @@
 				</mat-menu> -->
 			</mat-card-title>
 			<mat-card-subtitle>First 5 rows of the dataset.</mat-card-subtitle>
-			<mat-card-content class="preview-scroll">
+			<mat-card-content class="preview-scroll" >
 				<app-table *ngIf="isFileSelected" [rows]="rows" [cols]="cols"></app-table>
 			</mat-card-content>
 		</mat-card>
 	</div>
 	<div class="summary mat-elevation-z3">
-		<mat-card>
+		<mat-card tourAnchor="summaryId">
 			<mat-card-title>Summary
-				<button mat-icon-button class="more-button">
+				<button mat-icon-button class="more-button" >
 					<mat-icon [matTooltip]="tooltips.summary" matTooltipPosition="left">settings_ethernet</mat-icon>
 				</button>
 			</mat-card-title>
 			<mat-card-subtitle>Descriptive stats of the dataset. (Only applicable for numeric columns)
 			</mat-card-subtitle>
-			<mat-card-content class="summary-scroll">
+			<mat-card-content class="summary-scroll" >
 				<app-summary-table *ngIf="isFileSelected" [name]="'summary'" [rows]="summaryRows" [cols]="summaryCols">
 				</app-summary-table>
 			</mat-card-content>
 		</mat-card>
 	</div>
 	<div class="missingValues mat-elevation-z3">
-		<mat-card>
+		<mat-card tourAnchor="missingValuesId">
 			<mat-card-title>Missing Values
 				<button mat-icon-button class="more-button">
 					<mat-icon [matTooltip]="tooltips.missingValues" matTooltipPosition="left">settings_ethernet</mat-icon>
@@ -59,7 +59,7 @@
 			</mat-card-title>
 			<mat-card-subtitle>Count and Percentage (%) of missing values in the
 				dataset.</mat-card-subtitle>
-			<mat-card-content class="missing-values-scroll">
+			<mat-card-content class="missing-values-scroll" >
 				<div *ngIf="isFileSelected" style="display: flex; flex-direction: row; justify-content:space-around">
 					<fusioncharts [width]="width" [height]="height" [type]="type" [dataFormat]="dataFormat"
 						[dataSource]="dataSource">
@@ -69,7 +69,7 @@
 		</mat-card>
 	</div>
 	<div class="skewness mat-elevation-z3">
-		<mat-card>
+		<mat-card  tourAnchor="skewnessId">
 			<mat-card-title>Skewness and kurtosis
 				<button mat-icon-button class="more-button">
 					<mat-icon [matTooltip]="tooltips.skew" matTooltipPosition="left">settings_ethernet</mat-icon>
@@ -85,7 +85,7 @@
 </div>
 
 <div class="next-button">
-	<button mat-raised-button routerLink="/feature-selection" color="primary">
+	<button mat-raised-button routerLink="/feature-selection" color="primary" tourAnchor="previewNextId">
 		Next <mat-icon>arrow_right_alt</mat-icon>
 	</button>
 </div>

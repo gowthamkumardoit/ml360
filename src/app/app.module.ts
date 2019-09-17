@@ -60,6 +60,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { LayoutModule } from '@angular/cdk/layout';
+import { TourMatMenuModule } from 'ngx-tour-md-menu';
 // Add dependencies to FusionChartsModule
 FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
 
@@ -112,6 +113,7 @@ FusionChartsModule.fcRoot(FusionCharts, Charts, PowerCharts, FusionTheme);
     MatIconModule,
     MatButtonModule,
     LayoutModule,
+    TourMatMenuModule.forRoot()
   ],
   entryComponents: [
     BottomSheetComponent, ConfirmationDialogComponent, SpinnerComponent

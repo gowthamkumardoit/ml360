@@ -3,6 +3,7 @@ import { AuthService } from '../../services/auth.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { CommonService } from 'src/app/services/common.service';
+import { TourService } from 'ngx-tour-md-menu';
 
 @Component({
   selector: 'app-navigation',
@@ -15,7 +16,8 @@ export class NavigationComponent implements OnInit {
   user: any;
   @Output() sideNavEvent = new EventEmitter();
   sideNavClicked = false;
-  constructor(private authService: AuthService, private afauth: AngularFireAuth, private router: Router, private commonService: CommonService) { }
+  constructor(private authService: AuthService, private afauth: AngularFireAuth, private router: Router, private commonService: CommonService, 
+    private tourService: TourService) { }
 
   ngOnInit() {
     this.navLinks = [{ path: '/home', label: 'Home' },
@@ -52,5 +54,9 @@ export class NavigationComponent implements OnInit {
   showSideNav() {
     this.sideNavClicked = !this.sideNavClicked;
     this.sideNavEvent.next(this.sideNavClicked);
+  }
+
+  startTour() {
+    this.tourService.start();
   }
 }
